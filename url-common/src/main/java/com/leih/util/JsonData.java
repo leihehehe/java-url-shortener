@@ -32,7 +32,6 @@ public class JsonData {
    */
   public <T> T getData(TypeReference<T> typeReference) throws IOException {
     return objectMapper.readValue((JsonParser) data, typeReference);
-    //        return JSON.parseObject(JSON.toJSONString(data),typeReference);
   }
   /**
    * Success message without data
