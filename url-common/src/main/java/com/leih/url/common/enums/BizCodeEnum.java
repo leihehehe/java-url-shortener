@@ -1,4 +1,4 @@
-package com.leih.enums;
+package com.leih.url.common.enums;
 
 import lombok.Getter;
 

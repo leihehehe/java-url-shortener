@@ -1,4 +1,4 @@
-package com.leih.util;
+package com.leih.url.common.util;
 
 import lombok.extern.slf4j.Slf4j;
 

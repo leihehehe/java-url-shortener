@@ -1,4 +1,4 @@
-package com.leih.util;
+package com.leih.url.common.util;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.JsonParser;

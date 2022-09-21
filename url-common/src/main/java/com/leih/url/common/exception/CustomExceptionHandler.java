@@ -1,11 +1,8 @@
-package com.leih.exception;
+package com.leih.url.common.exception;
 
-import com.leih.enums.BizCodeEnum;
-import com.leih.util.JsonData;
+import com.leih.url.common.util.JsonData;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 @RestControllerAdvice

@@ -1,6 +1,6 @@
-package com.leih.exception;
+package com.leih.url.common.exception;
 
-import com.leih.enums.BizCodeEnum;
+import com.leih.url.common.enums.BizCodeEnum;
 import lombok.Data;
 
 @Data

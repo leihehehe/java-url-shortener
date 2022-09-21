@@ -1,0 +1,15 @@
+server:
+  port: 8001
+spring:
+  application:
+    name: url-account
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/url_account?serverTimezone=GMT&useUnicode=true&characterEncoding=utf8&useSSL=true
+    username: shorturl
+    password: shorturl
+  jpa:
+    show-sql: true
+    hibernate:
+      ddl-auto: update
+
