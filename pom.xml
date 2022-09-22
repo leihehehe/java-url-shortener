@@ -16,6 +16,8 @@
         <module>url-gateway</module>
         <module>url-link</module>
         <module>url-shop</module>
+        <module>eureka-server01</module>
+        <module>eureka-server02</module>
     </modules>
 
     <properties>
@@ -33,6 +35,8 @@
         <sharding-jdbc.version>4.1.1</sharding-jdbc.version>
         <junit.version>4.13.2</junit.version>
         <jpa.version>2.7.3</jpa.version>
+        <eureka.version>3.1.4</eureka.version>
+        <aws.sns.version>1.12.305</aws.sns.version>
     </properties>
 
     <dependencyManagement>
@@ -78,7 +82,7 @@
                 <artifactId>jjwt</artifactId>
                 <version>${jwt.version}</version>
             </dependency>
-            <!--􀚓􀫲􀭗􁲁-->
+            <!--redisson-->
             <dependency>
                 <groupId>org.redisson</groupId>
                 <artifactId>redisson</artifactId>
@@ -93,6 +97,21 @@
                 <groupId>junit</groupId>
                 <artifactId>junit</artifactId>
                 <version>${junit.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.cloud</groupId>
+                <artifactId>spring-cloud-starter-netflix-eureka-server</artifactId>
+                <version>${eureka.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.cloud</groupId>
+                <artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>
+                <version>${eureka.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.amazonaws</groupId>
+                <artifactId>aws-java-sdk-sns</artifactId>
+                <version>${aws.sns.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

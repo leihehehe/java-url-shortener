@@ -1,0 +1,16 @@
+server:
+  port: 8005
+spring:
+  application:
+    name: url-shop
+  jpa:
+    show-sql: true
+    hibernate:
+      ddl-auto: update
+eureka:
+  client:
+    service-url:
+      #     register to another server to achieve high availability
+      defaultZone: http://eureka1:8761/eureka/,http://eureka2:8762/eureka/
+    fetch-registry: true
+

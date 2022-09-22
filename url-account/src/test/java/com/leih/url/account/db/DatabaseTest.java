@@ -1,4 +1,4 @@
-package com.leih.url.account;
+package com.leih.url.account.db;
 
 import com.leih.url.account.dao.AccountRepository;
 import com.leih.url.account.entity.Account;

@@ -1,8 +1,8 @@
 server:
-  port: 8001
+  port: 8002
 spring:
   application:
-    name: url-account
+    name: url-data
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://localhost:3306/url_account?serverTimezone=GMT&useUnicode=true&characterEncoding=utf8&useSSL=true
@@ -18,8 +18,4 @@ eureka:
       #     register to another server to achieve high availability
       defaultZone: http://eureka1:8761/eureka/,http://eureka2:8762/eureka/
     fetch-registry: true
-sns:
-  # aws sns
-  access-key: xxx
-  secret-Key: xxx
-  regions: xxx
+
