@@ -4,7 +4,7 @@ import com.leih.url.account.UrlAccountApplication;
 import com.leih.url.account.component.SmsComponent;
 import com.leih.url.account.config.SmsConfig;
 import lombok.extern.slf4j.Slf4j;
-import org.junit.jupiter.api.Test;
+import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -19,6 +19,6 @@ public class SmsTest {
 
   @Test
   public void testSendingSms() {
-    smsComponent.sendSms("+61 406958427","haha hello shain");
+    smsComponent.sendSms("+61 433826966","haha hello");
   }
 }

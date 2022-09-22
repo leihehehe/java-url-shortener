@@ -37,5 +37,4 @@ public class SmsConfig {
     clientBuilder.setRegion(regions);
     amazonSNSClient = (AmazonSNSClient) clientBuilder.build();
   }
-
 }

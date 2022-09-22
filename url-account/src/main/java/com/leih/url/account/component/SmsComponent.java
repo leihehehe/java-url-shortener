@@ -17,8 +17,7 @@ public class SmsComponent {
   @Autowired SmsConfig smsConfig;
   Map<String, MessageAttributeValue> smsAttributes;
 
-  public boolean sendSms(
-      String phone, String message) {
+  public boolean sendSms(String phone, String message) {
     try {
       PublishResult publish =
           smsConfig
@@ -36,20 +35,19 @@ public class SmsComponent {
     }
   }
 
-    public Map<String, MessageAttributeValue> getDefaultSmsAttributes() {
-        if (smsAttributes == null) {
-            smsAttributes = new HashMap<>();
-            smsAttributes.put(
-                    "AWS.SNS.SMS.SenderID",
-                    new MessageAttributeValue().withStringValue("1").withDataType("String"));
-            smsAttributes.put(
-                    "AWS.SNS.SMS.MaxPrice",
-                    new MessageAttributeValue().withStringValue("0.05").withDataType("Number"));
-            smsAttributes.put(
-                    "AWS.SNS.SMS.SMSType",
-                    new MessageAttributeValue().withStringValue("Transactional").withDataType("String"));
-        }
-        return smsAttributes;
+  public Map<String, MessageAttributeValue> getDefaultSmsAttributes() {
+    if (smsAttributes == null) {
+      smsAttributes = new HashMap<>();
+      smsAttributes.put(
+          "AWS.SNS.SMS.SenderID",
+          new MessageAttributeValue().withStringValue("1").withDataType("String"));
+      smsAttributes.put(
+          "AWS.SNS.SMS.MaxPrice",
+          new MessageAttributeValue().withStringValue("0.05").withDataType("Number"));
+      smsAttributes.put(
+          "AWS.SNS.SMS.SMSType",
+          new MessageAttributeValue().withStringValue("Transactional").withDataType("String"));
     }
-
+    return smsAttributes;
+  }
 }
