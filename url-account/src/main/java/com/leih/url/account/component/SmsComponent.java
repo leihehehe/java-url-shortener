@@ -6,6 +6,7 @@ import com.amazonaws.services.sns.model.PublishResult;
 import com.leih.url.account.config.SmsConfig;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
@@ -17,6 +18,7 @@ public class SmsComponent {
   @Autowired SmsConfig smsConfig;
   Map<String, MessageAttributeValue> smsAttributes;
 
+//  @Async("threadPoolTaskExecutor")
   public boolean sendSms(String phone, String message) {
     try {
       PublishResult publish =

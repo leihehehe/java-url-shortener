@@ -4,6 +4,7 @@ import com.amazonaws.auth.AWSCredentials;
 import com.amazonaws.auth.AWSStaticCredentialsProvider;
 import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.regions.Regions;
+import com.amazonaws.services.sns.AmazonSNSAsyncClientBuilder;
 import com.amazonaws.services.sns.AmazonSNSClient;
 import com.amazonaws.services.sns.AmazonSNSClientBuilder;
 import com.amazonaws.services.sns.model.MessageAttributeValue;
@@ -30,7 +31,7 @@ public class SmsConfig {
 
   @PostConstruct
   public void init() {
-    AmazonSNSClientBuilder clientBuilder = AmazonSNSClientBuilder.standard();
+    AmazonSNSAsyncClientBuilder clientBuilder = AmazonSNSAsyncClientBuilder.standard();
     AWSCredentials awsCredentials = new BasicAWSCredentials(accessKey, secretKey);
     AWSStaticCredentialsProvider provider = new AWSStaticCredentialsProvider(awsCredentials);
     clientBuilder.setCredentials(provider);

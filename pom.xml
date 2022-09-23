@@ -37,6 +37,7 @@
         <jpa.version>2.7.3</jpa.version>
         <eureka.version>3.1.4</eureka.version>
         <aws.sns.version>1.12.305</aws.sns.version>
+        <captcha.version>1.1.0</captcha.version>
     </properties>
 
     <dependencyManagement>
@@ -112,6 +113,11 @@
                 <groupId>com.amazonaws</groupId>
                 <artifactId>aws-java-sdk-sns</artifactId>
                 <version>${aws.sns.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.baomidou</groupId>
+                <artifactId>kaptcha-spring-boot-starter</artifactId>
+                <version>${captcha.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
