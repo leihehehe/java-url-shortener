@@ -144,6 +144,7 @@ public class CommonUtil {
 
   /**
    * Send json message to frontend
+   *
    * @param response
    * @param obj
    */
@@ -153,7 +154,7 @@ public class CommonUtil {
       writer.print(JsonUtil.obj2Json(obj));
       response.flushBuffer();
     } catch (IOException e) {
-      log.warn("Send exception json data to frontend "+ e);
+      log.warn("Send exception json data to frontend " + e);
     }
   }
 }

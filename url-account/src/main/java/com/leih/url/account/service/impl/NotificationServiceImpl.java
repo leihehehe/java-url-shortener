@@ -1,0 +1,64 @@
+package com.leih.url.account.service.impl;
+
+import com.leih.url.account.component.SmsComponent;
+import com.leih.url.account.service.AccountService;
+import com.leih.url.account.service.NotificationService;
+import com.leih.url.common.constant.RedisKey;
+import com.leih.url.common.enums.BizCodeEnum;
+import com.leih.url.common.enums.SendCodeEnum;
+import com.leih.url.common.util.CheckUtil;
+import com.leih.url.common.util.CommonUtil;
+import com.leih.url.common.util.JsonData;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
+
+import java.util.concurrent.TimeUnit;
+
+@Service
+@Slf4j
+public class NotificationServiceImpl implements NotificationService {
+  /** 10 minutes */
+  private static final int CODE_EXPIRED = 60 * 1000 * 10;
+
+  @Autowired private SmsComponent smsComponent;
+  @Autowired private StringRedisTemplate redisTemplate;
+
+  /**
+   * Send code(email/sms)
+   *
+   * @param sendCodeEnum
+   * @param to
+   * @return
+   */
+  public JsonData sendCode(SendCodeEnum sendCodeEnum, String to) {
+    String cacheKey = String.format(RedisKey.CHECK_CODE_KEY, sendCodeEnum.name(), to);
+    String cacheValue = redisTemplate.opsForValue().get(cacheKey);
+    if (StringUtils.hasLength(cacheValue)) {
+      // if there's existing code in the redis
+      long ttl = Long.parseLong(cacheValue.split("_")[1]);
+      // check if current timestamp - ttl > 60s, if yes, send code, otherwise do not send code.
+      long intervalTime = CommonUtil.getCurrentTimestamp() - ttl;
+      if (intervalTime < (1000 * 60)) {
+        log.info("Sending code within 60 s -> time interval: {}", intervalTime);
+        return JsonData.buildResult(BizCodeEnum.CODE_LIMITED);
+      }
+    }
+
+    // new code generated
+    String code = CommonUtil.getRandomCode(6);
+    String value = code + "_" + CommonUtil.getCurrentTimestamp();
+    redisTemplate.opsForValue().set(cacheKey, value, CODE_EXPIRED, TimeUnit.MILLISECONDS);
+    boolean result;
+    // TODO: sending emails
+    if (CheckUtil.isPhone(to)) {
+      result = smsComponent.sendSms(to, "[Easy URL Shortener] Your code is " + code);
+      return result
+          ? JsonData.buildSuccess(BizCodeEnum.CODE_SUCCESS)
+          : JsonData.buildSuccess(BizCodeEnum.CODE_FAILED);
+    }
+    return JsonData.buildResult(BizCodeEnum.CODE_TO_ERROR);
+  }
+}

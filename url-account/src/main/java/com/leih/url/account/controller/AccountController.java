@@ -18,26 +18,6 @@ import java.io.IOException;
 @Slf4j
 @RequestMapping("/api/v1/account")
 public class AccountController {
-    @Autowired
-    Producer captchaProducer;
 
-    /**
-     * Generate captcha
-     * @param request
-     * @param response
-     */
-    @GetMapping("captcha")
-    public void getCaptcha(HttpServletRequest request, HttpServletResponse response){
-        String captchaText = captchaProducer.createText();
-        log.info("Captcha code:{}",captchaText);
-        BufferedImage image = captchaProducer.createImage(captchaText);
-        try {
-            ServletOutputStream outputStream = response.getOutputStream();
-            ImageIO.write(image,"png",outputStream);
-            outputStream.flush();
-            outputStream.close();
-        } catch (IOException e) {
-            log.error("Failed to get output stream: {}",e.getMessage());
-        }
-    }
+
 }

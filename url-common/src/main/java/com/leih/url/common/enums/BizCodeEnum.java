@@ -9,8 +9,10 @@ public enum BizCodeEnum {
   GROUP_NOT_EXIST(23404, "The group does not exist"),
   /** SMS Code */
   CODE_TO_ERROR(240001, "Invalid phone number"),
-  CODE_LIMITED(240002, "You are accessing service to frequent, please try again later"),
+  CODE_LIMITED(240002, "You are sending code too frequent, please try again later"),
   CODE_ERROR(240003, "Incorrect code"),
+  CODE_SUCCESS(240004, "Code has been sent"),
+  CODE_FAILED(240005, "Failed to send code"),
   CODE_CAPTCHA_ERROR(240101, "Incorrect CAPTCHA"),
   /** Account */
   ACCOUNT_REPEAT(250001, "The account has been created"),

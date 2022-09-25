@@ -23,17 +23,6 @@ public class JsonData {
   private String msg;
 
   /**
-   * Get Remote data
-   *
-   * @param typeReference
-   * @return
-   * @param <T>
-   * @throws IOException
-   */
-  public <T> T getData(TypeReference<T> typeReference) throws IOException {
-    return objectMapper.readValue((JsonParser) data, typeReference);
-  }
-  /**
    * Success message without data
    *
    * @return
@@ -41,6 +30,7 @@ public class JsonData {
   public static JsonData buildSuccess() {
     return new JsonData(0, null, null);
   }
+
   /**
    * Success message with data
    *
@@ -50,6 +40,7 @@ public class JsonData {
   public static JsonData buildSuccess(Object data) {
     return new JsonData(0, data, null);
   }
+
   /**
    * 􀥦􁨳􀒅􀖃􀙁􀵈􁬿􀗞􀯳
    *
@@ -59,6 +50,7 @@ public class JsonData {
   public static JsonData buildError(String msg) {
     return new JsonData(-1, null, msg);
   }
+
   /**
    * Error message with description
    *
@@ -72,5 +64,17 @@ public class JsonData {
 
   public static JsonData buildResult(BizCodeEnum bizCodeEnum) {
     return JsonData.buildCodeAndMsg(bizCodeEnum.getCode(), bizCodeEnum.getMessage());
+  }
+
+  /**
+   * Get Remote data
+   *
+   * @param typeReference
+   * @return
+   * @param <T>
+   * @throws IOException
+   */
+  public <T> T getData(TypeReference<T> typeReference) throws IOException {
+    return objectMapper.readValue((JsonParser) data, typeReference);
   }
 }
