@@ -34,27 +34,26 @@ public class NotificationServiceImpl implements NotificationService {
    * @return
    */
   public JsonData sendCode(SendCodeEnum sendCodeEnum, String to) {
-    String cacheKey = String.format(RedisKey.CHECK_CODE_KEY, sendCodeEnum.name(), to);
-    String cacheValue = redisTemplate.opsForValue().get(cacheKey);
-    if (StringUtils.hasLength(cacheValue)) {
+    String codeKeyInRedis = String.format(RedisKey.CHECK_CODE_KEY, sendCodeEnum.name(), to);
+    String codeValueInRedis = redisTemplate.opsForValue().get(codeKeyInRedis);
+    if (StringUtils.hasLength(codeValueInRedis)) {
       // if there's existing code in the redis
-      long ttl = Long.parseLong(cacheValue.split("_")[1]);
+      long ttl = Long.parseLong(codeValueInRedis.split("_")[1]);
       // check if current timestamp - ttl > 60s, if yes, send code, otherwise do not send code.
       long intervalTime = CommonUtil.getCurrentTimestamp() - ttl;
       if (intervalTime < (1000 * 60)) {
-        log.info("Sending code within 60 s -> time interval: {}", intervalTime);
+        log.info("Failed to send code within 60 s -> time interval: {}", intervalTime);
         return JsonData.buildResult(BizCodeEnum.CODE_LIMITED);
       }
     }
-
     // new code generated
     String code = CommonUtil.getRandomCode(6);
     String value = code + "_" + CommonUtil.getCurrentTimestamp();
-    redisTemplate.opsForValue().set(cacheKey, value, CODE_EXPIRED, TimeUnit.MILLISECONDS);
+    redisTemplate.opsForValue().set(codeKeyInRedis, value, CODE_EXPIRED, TimeUnit.MILLISECONDS);
     boolean result;
     // TODO: sending emails
     if (CheckUtil.isPhone(to)) {
-      result = smsComponent.sendSms(to, "[Easy URL Shortener] Your code is " + code);
+      result = smsComponent.sendSms(to, "[Easy URL Shortener] Your code is " + code + "(valid for 10 minutes)");
       return result
           ? JsonData.buildSuccess(BizCodeEnum.CODE_SUCCESS)
           : JsonData.buildSuccess(BizCodeEnum.CODE_FAILED);

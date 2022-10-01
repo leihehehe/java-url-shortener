@@ -46,7 +46,7 @@ public class NotificationController {
     // store captcha info into redis
     redisTemplate
         .opsForValue()
-        .set(getCaptchaKey(request), captchaText, CAPTCHA_CODE_EXPIRED, TimeUnit.MILLISECONDS);
+        .set(getCaptchaRedisKey(request), captchaText, CAPTCHA_CODE_EXPIRED, TimeUnit.MILLISECONDS);
 
     BufferedImage image = captchaProducer.createImage(captchaText);
     try (ServletOutputStream outputStream = response.getOutputStream()) {
@@ -63,7 +63,7 @@ public class NotificationController {
    * @param request
    * @return
    */
-  private String getCaptchaKey(HttpServletRequest request) {
+  private String getCaptchaRedisKey(HttpServletRequest request) {
     String ip = CommonUtil.getIpAddress(request);
     String userAgent = request.getHeader("User-Agent");
     String key = RedisKey.CAPTCHA_KEY + CommonUtil.MD5(ip + userAgent);
@@ -81,7 +81,7 @@ public class NotificationController {
   public JsonData sendSMS(
       @RequestBody SendCodeRequest sendCodeRequest, HttpServletRequest request) {
     // Check captcha first
-    String captchaKeyInRedis = getCaptchaKey(request);
+    String captchaKeyInRedis = getCaptchaRedisKey(request);
     String captchaValueInRedis = redisTemplate.opsForValue().get(captchaKeyInRedis);
     String captchaFromClient = sendCodeRequest.getCaptcha();
     if (captchaValueInRedis != null && captchaValueInRedis.equals(captchaFromClient)) {
