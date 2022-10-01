@@ -60,4 +60,18 @@ public class NotificationServiceImpl implements NotificationService {
     }
     return JsonData.buildResult(BizCodeEnum.CODE_TO_ERROR);
   }
+
+  @Override
+  public boolean checkCode(SendCodeEnum sendCodeEnum, String to, String code) {
+    String codeKeyInRedis = String.format(RedisKey.CHECK_CODE_KEY, sendCodeEnum.name(), to);
+    String codeValueInRedis = redisTemplate.opsForValue().get(codeKeyInRedis);
+    if(StringUtils.hasLength(codeValueInRedis)){
+      //if code exists in the redis, the code hasn't expired
+      String codeValue = codeValueInRedis.split("_")[0];
+      if(codeValue.equalsIgnoreCase(code)){
+        redisTemplate.delete(codeKeyInRedis);
+      }
+    }
+    return false;
+  }
 }

@@ -6,4 +6,5 @@ import org.springframework.stereotype.Service;
 
 public interface NotificationService {
   JsonData sendCode(SendCodeEnum sendCodeEnum, String to);
+  boolean checkCode(SendCodeEnum sendCodeEnum, String to, String code);
 }
