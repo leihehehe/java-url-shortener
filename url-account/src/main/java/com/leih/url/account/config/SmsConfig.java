@@ -31,9 +31,9 @@ public class SmsConfig {
 
   @PostConstruct
   public void init() {
-    AmazonSNSAsyncClientBuilder clientBuilder = AmazonSNSAsyncClientBuilder.standard();
     AWSCredentials awsCredentials = new BasicAWSCredentials(accessKey, secretKey);
     AWSStaticCredentialsProvider provider = new AWSStaticCredentialsProvider(awsCredentials);
+    AmazonSNSAsyncClientBuilder clientBuilder = AmazonSNSAsyncClientBuilder.standard();
     clientBuilder.setCredentials(provider);
     clientBuilder.setRegion(regions);
     amazonSNSClient = (AmazonSNSClient) clientBuilder.build();
