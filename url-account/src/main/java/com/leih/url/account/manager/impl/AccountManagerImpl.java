@@ -17,4 +17,8 @@ public class AccountManagerImpl implements AccountManager {
     public void insertAccount(Account account) {
         accountRepository.save(account);
     }
+    @Override
+    public Account findAccountByPhone(String phone) {
+        return accountRepository.findAccountByPhone(phone);
+    }
 }

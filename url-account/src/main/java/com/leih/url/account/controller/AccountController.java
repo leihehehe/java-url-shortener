@@ -1,5 +1,6 @@
 package com.leih.url.account.controller;
 
+import com.leih.url.account.controller.request.AccountLoginRequest;
 import com.leih.url.account.controller.request.AccountRegisterRequest;
 import com.leih.url.account.entity.Account;
 import com.leih.url.account.service.AccountService;
@@ -42,4 +43,8 @@ public class AccountController {
         return accountService.register(registerRequest);
     }
 
+    @PostMapping("login")
+    public JsonData login(@RequestBody AccountLoginRequest request){
+        return accountService.login(request);
+    }
 }
