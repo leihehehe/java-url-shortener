@@ -15,7 +15,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @Slf4j
-@RequestMapping("/api/v1/account")
+@RequestMapping("/api/account/v1/")
 public class AccountController {
     @Autowired
     FileService fileService;

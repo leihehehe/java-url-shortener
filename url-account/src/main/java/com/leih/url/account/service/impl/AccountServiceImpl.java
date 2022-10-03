@@ -12,6 +12,7 @@ import com.leih.url.common.enums.BizCodeEnum;
 import com.leih.url.common.enums.SendCodeEnum;
 import com.leih.url.common.model.LoggedInUser;
 import com.leih.url.common.util.CommonUtil;
+import com.leih.url.common.util.JWTUtil;
 import com.leih.url.common.util.JsonData;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.codec.digest.Md5Crypt;
@@ -50,9 +51,15 @@ public class AccountServiceImpl implements AccountService {
         account.setSecret("$1$"+CommonUtil.getStringNumRandom(8));
         String encryptedPass = Md5Crypt.md5Crypt(registerRequest.getPassword().getBytes(), account.getSecret());
         account.setPassword(encryptedPass);
-        accountManager.insertAccount(account);
-        log.info("Register success: {}",account);
-        return JsonData.buildSuccess();
+        try{
+            accountManager.insertAccount(account);
+            log.info("Register success: {}",account);
+            return JsonData.buildSuccess();
+        }catch (Exception e){
+            log.info("Register failed: {}",e.getMessage());
+            return JsonData.buildResult(BizCodeEnum.ACCOUNT_REPEAT);
+        }
+
     }
 
     /***
@@ -63,14 +70,15 @@ public class AccountServiceImpl implements AccountService {
     @Override
     public JsonData login(AccountLoginRequest loginRequest) {
         Account account = accountManager.findAccountByPhone(loginRequest.getPhone());
+        //TODO: login by username
         if(account!=null){
             String toBeVerified = Md5Crypt.md5Crypt(loginRequest.getPassword().getBytes(), account.getSecret());
             if(toBeVerified.equals(account.getPassword())){
                 //generate token
                 LoggedInUser loggedInUser = LoggedInUser.builder().build();
                 BeanUtils.copyProperties(account,loggedInUser);
-
-                return JsonData.buildSuccess("");
+                String token = JWTUtil.generateJsonWebToken(loggedInUser);
+                return JsonData.buildSuccess(token);
             }
         }else{
             log.info("The account {} does not exist!",loginRequest.getPhone());

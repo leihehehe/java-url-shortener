@@ -69,7 +69,9 @@ public class NotificationServiceImpl implements NotificationService {
       //if code exists in the redis, the code hasn't expired
       String codeValue = codeValueInRedis.split("_")[0];
       if(codeValue.equalsIgnoreCase(code)){
+        log.info("expected: {}, given: {}",codeValue,code);
         redisTemplate.delete(codeKeyInRedis);
+        return true;
       }
     }
     return false;

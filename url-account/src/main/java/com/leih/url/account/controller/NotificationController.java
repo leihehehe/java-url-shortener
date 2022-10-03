@@ -23,7 +23,7 @@ import java.util.concurrent.TimeUnit;
 
 @RestController
 @Slf4j
-@RequestMapping("/api/v1/account")
+@RequestMapping("/api/notification/v1")
 public class NotificationController {
   /** Expired time */
   private static final long CAPTCHA_CODE_EXPIRED = 1000 * 10 * 60;
