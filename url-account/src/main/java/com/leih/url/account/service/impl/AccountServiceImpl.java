@@ -12,6 +12,7 @@ import com.leih.url.common.enums.BizCodeEnum;
 import com.leih.url.common.enums.SendCodeEnum;
 import com.leih.url.common.model.LoggedInUser;
 import com.leih.url.common.util.CommonUtil;
+import com.leih.url.common.util.IdUtil;
 import com.leih.url.common.util.JWTUtil;
 import com.leih.url.common.util.JsonData;
 import lombok.extern.slf4j.Slf4j;
@@ -46,7 +47,8 @@ public class AccountServiceImpl implements AccountService {
         }
         Account account = new Account();
         BeanUtils.copyProperties(registerRequest,account);
-        account.setAccountNo(CommonUtil.getCurrentTimestamp());
+
+        account.setAccountNo((Long) IdUtil.generateSnowFlakeId());
         account.setAuth(AuthTypeEnum.PERSONAL_USER.name());
         account.setSecret("$1$"+CommonUtil.getStringNumRandom(8));
         String encryptedPass = Md5Crypt.md5Crypt(registerRequest.getPassword().getBytes(), account.getSecret());
