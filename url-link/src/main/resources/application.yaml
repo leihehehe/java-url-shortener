@@ -7,6 +7,25 @@ spring:
     show-sql: true
     hibernate:
       ddl-auto: update
+  shardingsphere:
+    datasource:
+      #datasource names
+      names: ds0
+      ds0:
+        connectionTimeoutMilliseconds: 30000
+        driver-class-name: com.mysql.cj.jdbc.Driver
+        idleTimeoutMilliseconds: 60000
+        jdbc-url: jdbc:mysql://localhost:3306/url_account?serverTimezone=GMT&useUnicode=true&characterEncoding=utf8&useSSL=true
+        maintenanceIntervalMilliseconds: 30000
+        maxLifetimeMilliseconds: 1800000
+        maxPoolSize: 50
+        minPoolSize: 50
+        type: com.zaxxer.hikari.HikariDataSource
+        username: shorturl
+        password: shorturl
+    props:
+      sql:
+        show: true
 eureka:
   client:
     service-url:
