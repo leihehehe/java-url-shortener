@@ -1,8 +1,11 @@
 package com.leih.url.account.entity;
 
 import lombok.Data;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.*;
+import java.sql.Timestamp;
 
 @Data
 @Table(
@@ -38,11 +41,12 @@ public class PlanTask {
   @Column(name = "message_id", length = 64)
   private String messageId;
 
-  @Column(name = "gmt_create", columnDefinition = "datetime DEFAULT CURRENT_TIMESTAMP")
-  private java.sql.Timestamp gmtCreate;
+  @Column(name = "gmt_create")
+  @CreationTimestamp
+  private Timestamp gmtCreate;
 
   @Column(
-      name = "gmt_modified",
-      columnDefinition = "datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP")
-  private java.sql.Timestamp gmtModified;
+      name = "gmt_modified")
+  @UpdateTimestamp
+  private Timestamp gmtModified;
 }

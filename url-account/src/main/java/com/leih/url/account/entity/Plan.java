@@ -1,9 +1,12 @@
 package com.leih.url.account.entity;
 
 import lombok.Data;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.naming.Name;
 import javax.persistence.*;
+import java.sql.Timestamp;
 
 @Data
 @Entity
@@ -35,11 +38,12 @@ public class Plan {
   private String pluginType;
   @Column(name="product_id")
   private long productId;
-  @Column(name = "gmt_create", columnDefinition = "datetime DEFAULT CURRENT_TIMESTAMP")
-  private java.sql.Timestamp gmtCreate;
+  @Column(name = "gmt_create")
+  @CreationTimestamp
+  private Timestamp gmtCreate;
   @Column(
-          name = "gmt_modified",
-          columnDefinition = "datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP")
-  private java.sql.Timestamp gmtModified;
+          name = "gmt_modified")
+  @UpdateTimestamp
+  private Timestamp gmtModified;
 
 }

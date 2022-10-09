@@ -4,9 +4,10 @@ spring:
   application:
     name: url-link
   jpa:
+    database-platform: org.hibernate.dialect.MySQL5InnoDBDialect
     show-sql: true
     hibernate:
-      ddl-auto: update
+      ddl-auto: create
   shardingsphere:
     datasource:
       #datasource names
