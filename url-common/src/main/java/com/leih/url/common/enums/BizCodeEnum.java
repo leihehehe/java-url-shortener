@@ -7,6 +7,8 @@ public enum BizCodeEnum {
   GROUP_REPEAT(23001, "Duplicate group name"),
   GROUP_OPER_FAIL(23503, "Failed operation on group name"),
   GROUP_NOT_EXIST(23404, "The group does not exist"),
+  GROUP_CREATE_FAILED(23405, "Failed to create group"),
+  GROUP_DELETE_FAILED(23405, "Failed to delete group"),
   /** SMS Code */
   CODE_TO_ERROR(240001, "Invalid phone number"),
   CODE_LIMITED(240002, "You are sending code too frequent, please try again later"),
@@ -18,7 +20,7 @@ public enum BizCodeEnum {
   ACCOUNT_REPEAT(250001, "The account has been created"),
   ACCOUNT_UNREGISTER(250002, "The account does not exist"),
   ACCOUNT_PWD_ERROR(250003, "Invalid username or password"),
-  ACCOUNT_UNLOGIN(250004, "You haven't log in"),
+  ACCOUNT_UNLOGIN(250004, "You haven't logged in"),
   /** Short url */
   SHORT_LINK_NOT_EXIST(260404, "The url does not exist"),
   /** Order */

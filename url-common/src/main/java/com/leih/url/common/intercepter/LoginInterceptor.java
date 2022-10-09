@@ -41,14 +41,14 @@ public class LoginInterceptor implements HandlerInterceptor {
       Long accountNo = Long.valueOf(claims.get("account_no").toString());
       String avatar = claims.get("avatar").toString();
       String username = claims.get("username").toString();
-      String email = claims.get("email").toString();
-      String phone = claims.get("phone").toString();
+//      String email = claims.get("email").toString();
+//      String phone = claims.get("phone").toString();
       String auth = claims.get("auth").toString();
       LoggedInUser loggedInUser = LoggedInUser.builder()
               .accountNo(accountNo)
               .auth(auth)
-              .phone(phone)
-              .email(email)
+//              .phone(phone)
+//              .email(email)
               .username(username)
               .avatar(avatar)
               .build();
@@ -56,6 +56,7 @@ public class LoginInterceptor implements HandlerInterceptor {
       log.info("logged-in user: {}",loggedInUser);
       return true;
     }
+    CommonUtil.sendJsonMessage(response,JsonData.buildResult(BizCodeEnum.ACCOUNT_UNLOGIN));
     return false;
   }
 

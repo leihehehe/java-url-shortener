@@ -7,7 +7,7 @@ spring:
     database-platform: org.hibernate.dialect.MySQL5InnoDBDialect
     show-sql: true
     hibernate:
-      ddl-auto: create
+      ddl-auto: update
   shardingsphere:
     datasource:
       #datasource names
@@ -27,6 +27,15 @@ spring:
     props:
       sql:
         show: true
+    sharding:
+      tables:
+        link_group:
+          key-generator:
+            type: SNOWFLAKE
+            column: id
+            props:
+              worker:
+                id: ${workerId}
 eureka:
   client:
     service-url:

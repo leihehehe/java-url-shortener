@@ -19,8 +19,8 @@ public class Link {
     private long id;
     @Column(name = "group_id")
     private long groupId;
-    @Column(name = "title",length = 128)
-    private String title;
+    @Column(name = "name",length = 128)
+    private String name;
     @Column(name = "original_url",length = 1024)
     private String originalUrl;
     @Column(name = "domain",length = 128)

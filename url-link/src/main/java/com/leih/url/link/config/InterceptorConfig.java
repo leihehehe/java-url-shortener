@@ -1,4 +1,4 @@
-package com.leih.url.account.config;
+package com.leih.url.link.config;
 
 import com.leih.url.common.intercepter.LoginInterceptor;
 import org.springframework.context.annotation.Configuration;
@@ -11,8 +11,7 @@ public class InterceptorConfig implements WebMvcConfigurer {
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(new LoginInterceptor())
                 //add paths to be intercepted
-                .addPathPatterns("/api/account/*/**","/api/plan/*/**")
-                .excludePathPatterns("/api/account/*/register","/api/account/*/login","/api/account/*/upload",
-                        "/api/notification/*/captcha","/api/notification/*/send_code");
+                .addPathPatterns("/api/link/*/**","/api/group/*/**","/api/domain/*/**")
+                .excludePathPatterns("");
     }
 }

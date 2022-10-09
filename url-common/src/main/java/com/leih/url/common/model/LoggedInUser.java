@@ -13,7 +13,7 @@ public class LoggedInUser {
     private Long accountNo;
     private String username;
     private String avatar;
-    private String email;
-    private String phone;
+//    private String email;
+//    private String phone;
     private String auth;
 }

@@ -18,8 +18,8 @@ public class LinkGroup {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private long id;
 
-  @Column(name = "title", length = 255)
-  private String title;
+  @Column(name = "name", length = 255)
+  private String name;
 
   @Column(name = "account_no")
   private long accountNo;
