@@ -8,7 +8,11 @@ public enum BizCodeEnum {
   GROUP_OPER_FAIL(23503, "Failed operation on group name"),
   GROUP_NOT_EXIST(23404, "The group does not exist"),
   GROUP_CREATE_FAILED(23405, "Failed to create group"),
-  GROUP_DELETE_FAILED(23405, "Failed to delete group"),
+  GROUP_DELETE_FAILED(23406, "Failed to delete group"),
+  GROUP_DETAILS_FAILED(23407, "Failed to get group details"),
+  GROUP_LIST_FAILED(23408, "Failed to list all groups"),
+  GROUP_UPDATE_FAILED(23407, "Failed to update  group "),
+
   /** SMS Code */
   CODE_TO_ERROR(240001, "Invalid phone number"),
   CODE_LIMITED(240002, "You are sending code too frequent, please try again later"),
