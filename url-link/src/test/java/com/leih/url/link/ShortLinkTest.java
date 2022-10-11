@@ -5,6 +5,8 @@ import com.leih.url.common.util.CommonUtil;
 import com.leih.url.link.component.ShortLinkComponent;
 import com.leih.url.link.dao.LinkGroupRepository;
 import com.leih.url.link.entity.LinkGroup;
+import com.leih.url.link.strategry.ShardingDBConfig;
+import com.leih.url.link.strategry.ShardingTableConfig;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -30,8 +32,18 @@ public class ShortLinkTest {
   @Test
   public void databaseTest(){
     LinkGroup linkGroup = new LinkGroup();
-    linkGroup.setTitle("test");
+    linkGroup.setName("test");
     linkGroup.setAccountNo(122223L);
     linkGroupRepository.save(linkGroup);
+  }
+
+  @Test
+  public void testRandomDBPrefix(){
+    for(int i =0;i<20;i++){
+      log.info(ShardingDBConfig.getRandomDBPrefix());
+    }
+    for(int i =0;i<20;i++){
+      log.info(ShardingTableConfig.getRandomTableSuffix());
+    }
   }
 }

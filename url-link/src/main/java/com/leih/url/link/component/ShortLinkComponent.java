@@ -1,6 +1,8 @@
 package com.leih.url.link.component;
 
 import com.leih.url.common.util.CommonUtil;
+import com.leih.url.link.strategry.ShardingDBConfig;
+import com.leih.url.link.strategry.ShardingTableConfig;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -13,7 +15,9 @@ public class ShortLinkComponent {
      */
     public String createShortLink(String originalUrl){
         long murmurHash = CommonUtil.MurmurHash(originalUrl);
-        return encodeToBase62(murmurHash);
+        String code = encodeToBase62(murmurHash);
+        String shortLinkCode = ShardingDBConfig.getRandomDBPrefix()+code+ ShardingTableConfig.getRandomTableSuffix();
+        return shortLinkCode;
     }
 
     /**
