@@ -53,11 +53,14 @@ public enum BizCodeEnum {
   OPS_REPEAT(110001, "Duplicate operation"),
   OPS_NETWORK_ADDRESS_ERROR(110002, "Invalid network address"),
   /** Files */
-  FILE_UPLOAD_USER_IMG_FAIL(700101, "Failed to upload user avatar");
+  FILE_UPLOAD_USER_IMG_FAIL(700101, "Failed to upload user avatar"),
+
+  /** Sharding jdbc code */
+  DB_ROUTE_NOT_FOUND(800101, "Failed to upload user avatar");
   @Getter private String message;
   @Getter private int code;
 
-   BizCodeEnum(int code, String message) {
+  BizCodeEnum(int code, String message) {
     this.code = code;
     this.message = message;
   }
