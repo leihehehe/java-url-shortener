@@ -20,7 +20,7 @@ public class LinkGroupManagerImpl implements LinkGroupManager {
       linkGroupRepository.save(linkGroup);
       return true;
     } catch (Exception e) {
-      log.error("Failed to save new group: {};\nexception: {}", linkGroup, e.getMessage());
+      log.error("Failed to create new group: {};\nexception: {}", linkGroup, e.getMessage());
       return false;
     }
   }
