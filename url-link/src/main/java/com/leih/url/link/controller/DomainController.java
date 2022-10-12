@@ -6,7 +6,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @Slf4j
-@RequestMapping("/api/link/v1/")
-public class ShortLinkController {
-
+@RequestMapping("/api/domain/v1/")
+public class DomainController {
 }
