@@ -1,6 +1,5 @@
 package com.leih.url.link;
 
-import com.google.common.hash.Hashing;
 import com.leih.url.common.util.CommonUtil;
 import com.leih.url.link.component.ShortLinkComponent;
 import com.leih.url.link.dao.LinkGroupRepository;
@@ -59,17 +58,17 @@ public class ShortLinkTest {
       String code = shortLinkComponent.createShortLink(originalUrl);
       int accountNo = random.nextInt(100000000);
       log.info(code);
-      Link link = new Link();
-      link.setCode(code);
-      link.setAccountNo(accountNo);
-      link.setSign(CommonUtil.MD5(originalUrl));
-      link.setDelete(0);
-      shortLinkManager.addShortLink(link);
+      Link shortLink = new Link();
+      shortLink.setCode(code);
+      shortLink.setAccountNo(accountNo);
+      shortLink.setSign(CommonUtil.MD5(originalUrl));
+      shortLink.setDelete(0);
+      shortLinkManager.addShortLink(shortLink);
     }
   }
   @Test
   public void testFindCode(){
-    Link shortLinkByCode = shortLinkManager.findShortLinkByCode("13TXpI5a");
-    log.info("query: {}",shortLinkByCode);
+    Link shortShortLinkByCode = shortLinkManager.findShortLinkByCode("13TXpI5a");
+    log.info("query: {}", shortShortLinkByCode);
   }
 }
