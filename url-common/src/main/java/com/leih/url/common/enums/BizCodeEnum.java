@@ -11,7 +11,7 @@ public enum BizCodeEnum {
   GROUP_DELETE_FAILED(23406, "Failed to delete group"),
   GROUP_DETAILS_FAILED(23407, "Failed to get group details"),
   GROUP_LIST_FAILED(23408, "Failed to list all groups"),
-  GROUP_UPDATE_FAILED(23407, "Failed to update  group "),
+  GROUP_UPDATE_FAILED(23407, "Failed to update group"),
 
   /** SMS Code */
   CODE_TO_ERROR(240001, "Invalid phone number"),

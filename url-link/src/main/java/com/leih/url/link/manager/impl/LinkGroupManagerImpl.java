@@ -50,18 +50,27 @@ public class LinkGroupManagerImpl implements LinkGroupManager {
     return linkGroupRepository.getLinkGroupsByAccountNo(accountNo);
   }
 
-  @Override
+/*  @Override
   public boolean updateGroup(LinkGroup linkGroup) {
     try {
-      LinkGroup updatedLinkGroup =
-          linkGroupRepository.getLinkGroupByAccountNoAndId(
-              linkGroup.getAccountNo(), linkGroup.getId());
+      LinkGroup updatedLinkGroup = linkGroupRepository.getLinkGroupByAccountNoAndId(linkGroup.getAccountNo(),linkGroup.getId());
       updatedLinkGroup.setName(linkGroup.getName());
       linkGroupRepository.save(updatedLinkGroup);
       return true;
     } catch (Exception e) {
       log.error(
           "Failed to update the group ID: {};\nexception: {}", linkGroup.getId(), e.getMessage());
+      return false;
+    }
+  }*/
+ @Override
+  public boolean updateGroup(long groupId, String name, long accountNo) {
+    try {
+      linkGroupRepository.updateLinkGroup(groupId,name,accountNo);
+      return true;
+    } catch (Exception e) {
+      log.error(
+          "Failed to update the group ID: {};\nexception: {}", groupId, e.getMessage());
       return false;
     }
   }

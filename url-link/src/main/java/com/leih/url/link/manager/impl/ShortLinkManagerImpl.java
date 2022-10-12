@@ -1,6 +1,5 @@
 package com.leih.url.link.manager.impl;
 
-import com.leih.url.common.intercepter.LoginInterceptor;
 import com.leih.url.link.dao.LinkRepository;
 import com.leih.url.link.entity.Link;
 import com.leih.url.link.manager.ShortLinkManager;
