@@ -10,7 +10,7 @@ import java.sql.Timestamp;
 @Table(name = "group_link_mapping",uniqueConstraints = {
         @UniqueConstraint(name = "uk_code",columnNames = {"code"})
 })
-public class GoupLinkMapping {
+public class GroupLinkMapping {
     @Id
     @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
