@@ -38,12 +38,10 @@ public class Plan {
   private String pluginType;
   @Column(name="product_id")
   private long productId;
-  @Column(name = "gmt_create")
-  @CreationTimestamp
+  @Column(name = "gmt_create",insertable = false, updatable = false, columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
   private Timestamp gmtCreate;
   @Column(
-          name = "gmt_modified")
-  @UpdateTimestamp
+          name = "gmt_modified", insertable = false, updatable = false, columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP")
   private Timestamp gmtModified;
 
 }
