@@ -3,7 +3,6 @@ package com.leih.url.link.service.impl;
 import com.leih.url.common.intercepter.LoginInterceptor;
 import com.leih.url.link.controller.request.LinkGroupAddRequest;
 import com.leih.url.link.controller.request.LinkGroupUpdateRequest;
-import com.leih.url.link.entity.Link;
 import com.leih.url.link.entity.LinkGroup;
 import com.leih.url.link.manager.LinkGroupManager;
 import com.leih.url.link.service.LinkGroupService;
@@ -13,7 +12,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class LinkGroupServiceImpl implements LinkGroupService {
@@ -63,10 +61,10 @@ public class LinkGroupServiceImpl implements LinkGroupService {
   @Override
   public boolean updateGroup(LinkGroupUpdateRequest request) {
     Long accountNo = LoginInterceptor.threadLocal.get().getAccountNo();
-    LinkGroup linkGroup = new LinkGroup();
-    linkGroup.setName(request.getName());
-    linkGroup.setAccountNo(accountNo);
-    linkGroup.setId(request.getId());
-    return linkGroupManager.updateGroup(linkGroup);
+    //    LinkGroup linkGroup = new LinkGroup();
+    //    linkGroup.setName(request.getName());
+    //    linkGroup.setAccountNo(accountNo);
+    //    linkGroup.setId(request.getId());
+    return linkGroupManager.updateGroup(request.getId(), request.getName(), accountNo);
   }
 }

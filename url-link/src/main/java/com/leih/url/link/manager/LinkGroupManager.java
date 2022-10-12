@@ -12,5 +12,6 @@ public interface LinkGroupManager {
     LinkGroup getGroup(Long accountNo, long groupId);
     List<LinkGroup> listAllGroups(Long accountNo);
 
-    boolean updateGroup(LinkGroup linkGroup);
+//    boolean updateGroup(LinkGroup linkGroup);
+    boolean updateGroup(long groupId, String name, long accountNo);
 }

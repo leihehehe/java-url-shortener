@@ -46,12 +46,10 @@ public class Account {
   @Column(name = "auth",length = 32)
   private String auth;
 
-  @Column(name = "gmt_create")
-  @CreationTimestamp
+  @Column(name = "gmt_create",insertable = false, updatable = false, columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
   private Timestamp gmtCreate;
 
   @Column(
-      name = "gmt_modified")
-  @UpdateTimestamp
+          name = "gmt_modified", insertable = false, updatable = false, columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP")
   private Timestamp gmtModified;
 }
