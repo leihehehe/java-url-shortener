@@ -26,7 +26,7 @@ public class LinkGroupManagerImpl implements LinkGroupManager {
   }
 
   @Override
-  public boolean deleteGroup(long accountNo, long groupId) {
+  public boolean deleteGroup(Long accountNo, Long groupId) {
     try {
       linkGroupRepository.deleteLinkGroupByAccountNoAndId(accountNo, groupId);
       return true;
@@ -41,7 +41,7 @@ public class LinkGroupManagerImpl implements LinkGroupManager {
   }
 
   @Override
-  public LinkGroup getGroup(Long accountNo, long groupId) {
+  public LinkGroup getGroup(Long accountNo, Long groupId) {
     return linkGroupRepository.getLinkGroupByAccountNoAndId(accountNo, groupId);
   }
 
@@ -50,21 +50,8 @@ public class LinkGroupManagerImpl implements LinkGroupManager {
     return linkGroupRepository.getLinkGroupsByAccountNo(accountNo);
   }
 
-/*  @Override
-  public boolean updateGroup(LinkGroup linkGroup) {
-    try {
-      LinkGroup updatedLinkGroup = linkGroupRepository.getLinkGroupByAccountNoAndId(linkGroup.getAccountNo(),linkGroup.getId());
-      updatedLinkGroup.setName(linkGroup.getName());
-      linkGroupRepository.save(updatedLinkGroup);
-      return true;
-    } catch (Exception e) {
-      log.error(
-          "Failed to update the group ID: {};\nexception: {}", linkGroup.getId(), e.getMessage());
-      return false;
-    }
-  }*/
  @Override
-  public boolean updateGroup(long groupId, String name, long accountNo) {
+  public boolean updateGroup(Long groupId, String name, Long accountNo) {
     try {
       linkGroupRepository.updateLinkGroup(groupId,name,accountNo);
       return true;

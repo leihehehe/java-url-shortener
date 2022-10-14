@@ -12,11 +12,11 @@ import java.util.List;
 public interface LinkGroupRepository extends JpaRepository<LinkGroup,Long> {
     @Transactional
     @Modifying
-    int deleteLinkGroupByAccountNoAndId(long accountNo, long id);
-    LinkGroup getLinkGroupByAccountNoAndId(long accountNo,long id);
-    List<LinkGroup> getLinkGroupsByAccountNo(long accountNo);
+    int deleteLinkGroupByAccountNoAndId(Long accountNo, Long id);
+    LinkGroup getLinkGroupByAccountNoAndId(Long accountNo,Long id);
+    List<LinkGroup> getLinkGroupsByAccountNo(Long accountNo);
     @Transactional
     @Modifying
     @Query("update LinkGroup set name = :name where id=:id and accountNo=:accountNo")
-    int updateLinkGroup(@Param("id") long groupId, @Param("name") String name, @Param("accountNo") long accountNo);
+    int updateLinkGroup(@Param("id") Long groupId, @Param("name") String name, @Param("accountNo") Long accountNo);
 }
