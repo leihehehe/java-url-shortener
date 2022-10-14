@@ -12,25 +12,25 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Repository
 public interface GroupLinkMappingRepository extends JpaRepository<GroupLinkMapping, Long> {
-  GroupLinkMapping findLinkByIdAndAccountNoAndGroupId(long id, long accountNo, long groupId);
+  GroupLinkMapping findLinkByIdAndAccountNoAndGroupId(Long id, Long accountNo, Long groupId);
 
   @Modifying
   @Transactional
   @Query(
-      "update GroupLinkMapping set delete=1 where code=:code and accountNo=:accountNo and groupId=:groupId")
+      "update GroupLinkMapping set deleteStatus=1 where code=:code and accountNo=:accountNo and groupId=:groupId")
   int deleteGroupLinkMapping(
       @Param("code") String shortLinkCode,
-      @Param("accountNo") long accountNo,
-      @Param("groupId") long groupId);
+      @Param("accountNo") Long accountNo,
+      @Param("groupId") Long groupId);
   @Modifying
   @Transactional
   @Query(
           "update GroupLinkMapping set state=:state where code=:code and accountNo=:accountNo and groupId=:groupId")
   int updateGroupLinkMappingState(
           @Param("code") String shortLinkCode,
-          @Param("accountNo") long accountNo,
-          @Param("groupId") long groupId,
+          @Param("accountNo") Long accountNo,
+          @Param("groupId") Long groupId,
           @Param("state") String state);
   Page<GroupLinkMapping> findAllByAccountNoAndGroupId(
-      Pageable pageable, long accountNo, long groupId);
+      Pageable pageable, Long accountNo, Long groupId);
 }

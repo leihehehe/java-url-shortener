@@ -32,14 +32,14 @@ public class LinkGroupController {
   }
 
   @DeleteMapping("/delete/{group_id}")
-  public JsonData deleteGroup(@PathVariable("group_id") long groupId) {
+  public JsonData deleteGroup(@PathVariable("group_id") Long groupId) {
     return linkGroupService.deleteGroup(groupId)
         ? JsonData.buildSuccess()
         : JsonData.buildResult(BizCodeEnum.GROUP_DELETE_FAILED);
   }
 
   @GetMapping("/details/{group_id}")
-  public JsonData detail(@PathVariable("group_id") long groupId) {
+  public JsonData detail(@PathVariable("group_id") Long groupId) {
     LinkGroupVo details = linkGroupService.getDetails(groupId);
     return details != null
         ? JsonData.buildSuccess(details)

@@ -22,7 +22,7 @@ public class GroupLinkMappingManagerImpl implements GroupLinkMappingManager {
     @Autowired
     GroupLinkMappingRepository groupLinkMappingRepository;
     @Override
-    public GroupLinkMapping findShortLinkByGroupIdAndMappingId(long mappingId, long accountNo, long groupId) {
+    public GroupLinkMapping findShortLinkByGroupIdAndMappingId(Long mappingId, Long accountNo, Long groupId) {
         return groupLinkMappingRepository.findLinkByIdAndAccountNoAndGroupId(mappingId, accountNo, groupId);
     }
 
@@ -38,7 +38,7 @@ public class GroupLinkMappingManagerImpl implements GroupLinkMappingManager {
     }
 
     @Override
-    public boolean deleteShortLink(String shortLinkCode, long accountNo, long groupId) {
+    public boolean deleteShortLink(String shortLinkCode, Long accountNo, Long groupId) {
         try{
             groupLinkMappingRepository.deleteGroupLinkMapping(shortLinkCode,accountNo,groupId);
             return true;
@@ -49,23 +49,23 @@ public class GroupLinkMappingManagerImpl implements GroupLinkMappingManager {
     }
 
     @Override
-    public Map<String, Object> pageShortLinkByGroupId(int page, int size, long accountNo, long groupId) {
+    public Map<String, Object> pageShortLinkByGroupId(int page, int size, Long accountNo, Long groupId) {
 
         Page<GroupLinkMapping> shortLinksPage = groupLinkMappingRepository.findAllByAccountNoAndGroupId(PageRequest.of(page, size), accountNo, groupId);
         Map<String,Object> pageInfo = new HashMap<>(3);
         pageInfo.put("total_records",shortLinksPage.getTotalElements());
         pageInfo.put("total_pages",shortLinksPage.getTotalPages());
-        pageInfo.put("current_data",shortLinksPage.getContent().stream().map(this::beanProcess).collect(Collectors.toList()));
+        pageInfo.put("current_data",shortLinksPage.getContent().stream().map(this::convertObjectToVo).collect(Collectors.toList()));
         return pageInfo;
     }
 
-    private GroupLinkMappingVo beanProcess(GroupLinkMapping groupLinkMapping){
+    private GroupLinkMappingVo convertObjectToVo(GroupLinkMapping groupLinkMapping){
         GroupLinkMappingVo groupLinkMappingVo = new GroupLinkMappingVo();
         BeanUtils.copyProperties(groupLinkMapping,groupLinkMappingVo);
         return groupLinkMappingVo;
     }
     @Override
-    public boolean updateGroup(long accountNo, long groupId, String shortLinkCode, ShortLinkStateEnum shortLinkStateEnum) {
+    public boolean updateGroup(Long accountNo, Long groupId, String shortLinkCode, ShortLinkStateEnum shortLinkStateEnum) {
         try{
             groupLinkMappingRepository.updateGroupLinkMappingState(shortLinkCode,accountNo,groupId,shortLinkStateEnum.name());
             return true;

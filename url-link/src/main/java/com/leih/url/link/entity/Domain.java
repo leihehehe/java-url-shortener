@@ -12,7 +12,7 @@ public class Domain {
   @Id
   @Column(name = "id")
   @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private long id;
+  private Long id;
 
   @Column(name = "domain_type", length = 11)
   private String domainType;
@@ -24,7 +24,7 @@ public class Domain {
   private int delete;
 
   @Column(name = "account_no")
-  private long accountNo;
+  private Long accountNo;
 
   @Column(
       name = "gmt_create",
