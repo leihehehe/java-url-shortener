@@ -16,13 +16,13 @@ public class LinkGroup {
   @Id
   @Column(name = "id")
   @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private long id;
+  private Long id;
 
   @Column(name = "name", length = 255)
   private String name;
 
   @Column(name = "account_no")
-  private long accountNo;
+  private Long accountNo;
 
   @Column(name = "gmt_create",insertable = false, updatable = false, columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
   private Timestamp gmtCreate;
