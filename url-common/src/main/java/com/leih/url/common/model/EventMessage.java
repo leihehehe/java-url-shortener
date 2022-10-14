@@ -18,7 +18,7 @@ public class EventMessage implements Serializable {
     /**
      * Event Type
      */
-    private String eventType;
+    private String eventMessageType;
     /**
      * Business ID
      */
