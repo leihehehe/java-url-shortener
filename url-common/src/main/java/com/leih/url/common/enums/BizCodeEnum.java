@@ -56,7 +56,9 @@ public enum BizCodeEnum {
   FILE_UPLOAD_USER_IMG_FAIL(700101, "Failed to upload user avatar"),
 
   /** Sharding jdbc code */
-  DB_ROUTE_NOT_FOUND(800101, "Failed to upload user avatar");
+  DB_ROUTE_NOT_FOUND(800101, "Failed to upload user avatar"),
+  /** Message queue */
+  MQ_CONSUMER_EXCEPTION(900101, "Failed to handle message");
   @Getter private String message;
   @Getter private int code;
 
