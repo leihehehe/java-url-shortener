@@ -16,9 +16,9 @@ public class Link {
     @Id
     @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    private Long id;
     @Column(name = "group_id")
-    private long groupId;
+    private Long groupId;
     @Column(name = "name",length = 128)
     private String name;
     @Column(name = "original_url",length = 1024)
@@ -30,7 +30,7 @@ public class Link {
     @Column(name = "sign",length = 64)
     private String sign;
     @Column(name = "account_no")
-    private long accountNo;
+    private Long accountNo;
     @Column(name = "expired")
     private Timestamp expired;
     @Column(name = "gmt_create",insertable = false, updatable = false, columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")

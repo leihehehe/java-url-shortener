@@ -7,11 +7,11 @@ import java.util.List;
 public interface LinkGroupManager {
     boolean addGroup(LinkGroup linkGroup);
 
-    boolean deleteGroup(long accountNo, long groupId);
+    boolean deleteGroup(Long accountNo, Long groupId);
 
-    LinkGroup getGroup(Long accountNo, long groupId);
+    LinkGroup getGroup(Long accountNo, Long groupId);
     List<LinkGroup> listAllGroups(Long accountNo);
 
 //    boolean updateGroup(LinkGroup linkGroup);
-    boolean updateGroup(long groupId, String name, long accountNo);
+    boolean updateGroup(Long groupId, String name, Long accountNo);
 }

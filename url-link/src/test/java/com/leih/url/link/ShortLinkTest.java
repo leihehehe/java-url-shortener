@@ -60,7 +60,7 @@ public class ShortLinkTest {
       log.info(code);
       Link shortLink = new Link();
       shortLink.setCode(code);
-      shortLink.setAccountNo(accountNo);
+      shortLink.setAccountNo((long) accountNo);
       shortLink.setSign(CommonUtil.MD5(originalUrl));
       shortLink.setDelete(0);
       shortLinkManager.addShortLink(shortLink);
