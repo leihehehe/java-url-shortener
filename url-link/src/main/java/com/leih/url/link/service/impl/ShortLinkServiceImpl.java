@@ -13,9 +13,11 @@ import com.leih.url.link.component.ShortLinkComponent;
 import com.leih.url.link.config.RabbitMQConfig;
 import com.leih.url.link.controller.request.ShortLinkAddRequest;
 import com.leih.url.link.entity.Domain;
+import com.leih.url.link.entity.GroupLinkMapping;
 import com.leih.url.link.entity.Link;
 import com.leih.url.link.entity.LinkGroup;
 import com.leih.url.link.manager.DomainManager;
+import com.leih.url.link.manager.GroupLinkMappingManager;
 import com.leih.url.link.manager.LinkGroupManager;
 import com.leih.url.link.manager.ShortLinkManager;
 import com.leih.url.link.service.ShortLinkService;
@@ -36,6 +38,7 @@ public class ShortLinkServiceImpl implements ShortLinkService {
   @Autowired private RabbitTemplate rabbitTemplate;
   @Autowired private DomainManager domainManager;
   @Autowired private LinkGroupManager linkGroupManager;
+  @Autowired private GroupLinkMappingManager groupLinkMappingManager;
   @Autowired private ShortLinkComponent shortLinkComponent;
   @Override
   public LinkVo parseShortLinkCode(String shortLinkCode) {
@@ -66,6 +69,12 @@ public class ShortLinkServiceImpl implements ShortLinkService {
     return JsonData.buildSuccess();
   }
 
+  /**
+   * Add short link in terms of event message type
+   * Add short link to link/mapping tables
+   * @param eventMessage
+   * @return
+   */
   @Override
   public boolean handleAddShortLink(EventMessage eventMessage) {
     Long accountNo = eventMessage.getAccountNo();
@@ -73,22 +82,48 @@ public class ShortLinkServiceImpl implements ShortLinkService {
     //get request
     ShortLinkAddRequest shortLinkAddRequest =
         JsonUtil.json2Obj(eventMessage.getContent(), ShortLinkAddRequest.class);
+    //get domain
     Domain domain = checkDomain(shortLinkAddRequest.getDomainType(), shortLinkAddRequest.getDomainId(), accountNo);
+    //get group
     LinkGroup linkGroup = checkLinkGroup(shortLinkAddRequest.getGroupId(), accountNo);
+    //get digest of the original url
     String originalUrlDigest = CommonUtil.MD5(shortLinkAddRequest.getOriginalUrl());
     String shortLinkCode = shortLinkComponent.createShortLink(shortLinkAddRequest.getOriginalUrl());
-    Link shortLink = Link.builder().accountNo(accountNo)
-            .code(shortLinkCode)
-            .name(shortLinkAddRequest.getName())
-            .originalUrl(shortLinkAddRequest.getOriginalUrl())
-            .domain(domain.getValue())
-            .groupId(linkGroup.getId())
-            .expired(shortLinkAddRequest.getExpired())
-            .sign(originalUrlDigest)
-            .state(ShortLinkStateEnum.ACTIVATED.name())
-            .del(0)
-            .build();
-    return shortLinkManager.addShortLink(shortLink);
+    //TODO: add a lock for the following action
+    Link shortLinkInDB = shortLinkManager.findShortLinkByCode(shortLinkCode);
+    //short link code is not used in the database
+    if(shortLinkInDB==null){
+      if(EventMessageType.SHORT_LINK_ADD_LINK.name().equalsIgnoreCase(eventMessageType)){
+        Link shortLink = Link.builder().accountNo(accountNo)
+                .code(shortLinkCode)
+                .name(shortLinkAddRequest.getName())
+                .originalUrl(shortLinkAddRequest.getOriginalUrl())
+                .domain(domain.getValue())
+                .groupId(linkGroup.getId())
+                .expired(shortLinkAddRequest.getExpired())
+                .sign(originalUrlDigest)
+                .state(ShortLinkStateEnum.ACTIVATED.name())
+                .del(0)
+                .build();
+        return shortLinkManager.addShortLink(shortLink);
+      }
+      else if(EventMessageType.SHORT_LINK_ADD_MAPPING.name().equalsIgnoreCase(eventMessageType)){
+        GroupLinkMapping groupLinkMapping = GroupLinkMapping.builder().accountNo(accountNo)
+                .code(shortLinkCode)
+                .name(shortLinkAddRequest.getName())
+                .originalUrl(shortLinkAddRequest.getOriginalUrl())
+                .domain(domain.getValue())
+                .groupId(linkGroup.getId())
+                .expired(shortLinkAddRequest.getExpired())
+                .sign(originalUrlDigest)
+                .state(ShortLinkStateEnum.ACTIVATED.name())
+                .del(0)
+                .build();
+        return groupLinkMappingManager.addShortLink(groupLinkMapping);
+      }
+    }
+
+    return false;
   }
 
   /**
