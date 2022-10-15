@@ -18,7 +18,7 @@ public class GroupLinkMappingVo {
     private Timestamp gmtCreate;
     private Timestamp gmtModified;
     //0 -> default, 1 -> deleted
-    private int delete;
+    private int del;
     private String state;
     private String linkType;
 }

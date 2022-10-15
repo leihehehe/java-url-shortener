@@ -86,7 +86,7 @@ public class ShortLinkServiceImpl implements ShortLinkService {
             .expired(shortLinkAddRequest.getExpired())
             .sign(originalUrlDigest)
             .state(ShortLinkStateEnum.ACTIVATED.name())
-            .delete(0)
+            .del(0)
             .build();
     return shortLinkManager.addShortLink(shortLink);
   }

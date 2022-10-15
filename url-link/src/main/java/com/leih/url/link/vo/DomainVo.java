@@ -2,7 +2,6 @@ package com.leih.url.link.vo;
 
 import lombok.Data;
 
-import javax.persistence.*;
 import java.sql.Timestamp;
 
 @Data
@@ -13,7 +12,7 @@ public class DomainVo {
 
   private String value;
 
-  private int delete;
+  private int del;
 
   private long accountNo;
 
