@@ -1,7 +1,9 @@
 package com.leih.url.link.entity;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.sql.Timestamp;
@@ -9,6 +11,8 @@ import java.sql.Timestamp;
 @Data
 @Entity
 @Builder
+@AllArgsConstructor
+@NoArgsConstructor
 @Table(name = "short_link",uniqueConstraints = {
         @UniqueConstraint(name = "uk_code",columnNames = {"code"})
 })
