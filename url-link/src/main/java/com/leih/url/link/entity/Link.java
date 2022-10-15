@@ -1,14 +1,14 @@
 package com.leih.url.link.entity;
 
+import lombok.Builder;
 import lombok.Data;
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.*;
 import java.sql.Timestamp;
 
 @Data
 @Entity
+@Builder
 @Table(name = "short_link",uniqueConstraints = {
         @UniqueConstraint(name = "uk_code",columnNames = {"code"})
 })
@@ -41,7 +41,7 @@ public class Link {
     private Timestamp gmtModified;
     //0 -> default, 1 -> deleted
     @Column(name = "del")
-    private int delete;
+    private int del;
     @Column(name = "state",length = 16)
     private String state;
     @Column(name = "link_type",length = 16)
