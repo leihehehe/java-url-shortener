@@ -37,7 +37,7 @@ public class ShortLinkManagerImpl implements ShortLinkManager {
     public boolean deleteShortLink(String linkCode) {
         try{
             Link shortLink = findShortLinkByCode(linkCode);
-            shortLink.setDelete(1);
+            shortLink.setDel(1);
             linkRepository.save(shortLink);
             return true;
         }catch (Exception e){
