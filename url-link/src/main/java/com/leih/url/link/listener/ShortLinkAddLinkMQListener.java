@@ -24,12 +24,13 @@ public class ShortLinkAddLinkMQListener {
         long tag = message.getMessageProperties().getDeliveryTag();
         try{
             //TODO
+            int i =1/0;
         }catch (Exception e){
             log.error("Failed to handle message: {}",eventMessage);
             throw new BizException(BizCodeEnum.MQ_CONSUMER_EXCEPTION);
         }
         log.info("Successfully consumed the message by ShortLinkAddLinkMQListener: {}",eventMessage);
         //confirm that message is successful.
-        channel.basicAck(tag,false);
+        //channel.basicAck(tag,false);
     }
 }

@@ -29,6 +29,6 @@ public class ShortLinkAddMappingMQListener {
         }
         log.info("Successfully consumed the message by ShortLinkAddMappingMQListener: {}",eventMessage);
         //confirm that message is successful.
-        channel.basicAck(tag,false);
+        //channel.basicAck(tag,false);
     }
 }
