@@ -1,12 +1,18 @@
 package com.leih.url.link.entity;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.sql.Timestamp;
 
 @Data
 @Entity
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 @Table(name = "group_link_mapping",uniqueConstraints = {
         @UniqueConstraint(name = "uk_code",columnNames = {"code"})
 })
