@@ -21,7 +21,7 @@ public class Domain {
   private String value;
 
   @Column(name = "del")
-  private int delete;
+  private int del;
 
   @Column(name = "account_no")
   private Long accountNo;
