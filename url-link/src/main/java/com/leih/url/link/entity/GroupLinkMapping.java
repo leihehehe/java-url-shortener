@@ -39,7 +39,7 @@ public class GroupLinkMapping {
     private Timestamp gmtModified;
     //0 -> default, 1 -> deleted
     @Column(name = "del")
-    private int deleteStatus;
+    private int del;
     @Column(name = "state",length = 16)
     private String state;
     @Column(name = "link_type",length = 16)

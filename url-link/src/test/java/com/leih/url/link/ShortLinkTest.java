@@ -62,7 +62,7 @@ public class ShortLinkTest {
       shortLink.setCode(code);
       shortLink.setAccountNo((long) accountNo);
       shortLink.setSign(CommonUtil.MD5(originalUrl));
-      shortLink.setDelete(0);
+      shortLink.setDel(0);
       shortLinkManager.addShortLink(shortLink);
     }
   }
