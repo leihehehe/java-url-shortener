@@ -20,7 +20,6 @@ public class ShortLinkAddMappingMQListener {
     @RabbitHandler
     public void shortLinkHandler(EventMessage eventMessage, Message message, Channel channel) throws IOException {
         log.info("Message received by ShortLinkAddMappingMQListener: {}",message);
-        long tag = message.getMessageProperties().getDeliveryTag();
         try{
             //TODO
         }catch (Exception e){
