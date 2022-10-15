@@ -3,7 +3,6 @@ package com.leih.url.link.listener;
 import com.leih.url.common.enums.BizCodeEnum;
 import com.leih.url.common.exception.BizException;
 import com.leih.url.common.model.EventMessage;
-import com.leih.url.link.config.RabbitMQConfig;
 import com.rabbitmq.client.Channel;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.core.Message;
@@ -16,19 +15,13 @@ import java.io.IOException;
 
 @Component
 @Slf4j
-@RabbitListener(queuesToDeclare = {@Queue("short_link.add.link.queue")})
-public class ShortLinkAddLinkMQListener {
+@RabbitListener(queuesToDeclare ={@Queue("short_link.error.queue")})
+public class ShortLinkErrorListener {
     @RabbitHandler
     public void shortLinkHandler(EventMessage eventMessage, Message message, Channel channel) throws IOException {
-        log.info("Message received by ShortLinkAddLinkMQListener: {}",message);
-        try{
-            //TODO
-        }catch (Exception e){
-            log.error("Failed to handle message: {}",eventMessage);
-            throw new BizException(BizCodeEnum.MQ_CONSUMER_EXCEPTION);
-        }
-        log.info("Successfully consumed the message by ShortLinkAddLinkMQListener: {}",eventMessage);
-        //confirm that message is successful.
-        //channel.basicAck(tag,false);
+        log.info("Received messages in ShortLinkErrorMQListener, eventMessage: {}",eventMessage);
+        //Exception message
+        log.info("Message: {}",message);
+        log.info("Alert!!");
     }
 }
