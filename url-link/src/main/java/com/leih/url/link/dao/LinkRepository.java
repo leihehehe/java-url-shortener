@@ -6,5 +6,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface LinkRepository extends JpaRepository<Link,Long> {
-    Link findLinkByCode(String code);
+    Link findLinkByCodeAndDel(String code,int del);
 }

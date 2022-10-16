@@ -30,7 +30,7 @@ public class ShortLinkManagerImpl implements ShortLinkManager {
      */
     @Override
     public Link findShortLinkByCode(String linkCode) {
-        return linkRepository.findLinkByCode(linkCode);
+        return linkRepository.findLinkByCodeAndDel(linkCode,0);
     }
 
     @Override

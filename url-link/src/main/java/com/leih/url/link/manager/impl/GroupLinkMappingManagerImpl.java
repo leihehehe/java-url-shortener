@@ -23,7 +23,7 @@ public class GroupLinkMappingManagerImpl implements GroupLinkMappingManager {
     GroupLinkMappingRepository groupLinkMappingRepository;
     @Override
     public GroupLinkMapping findShortLinkByGroupIdAndMappingId(Long mappingId, Long accountNo, Long groupId) {
-        return groupLinkMappingRepository.findLinkByIdAndAccountNoAndGroupId(mappingId, accountNo, groupId);
+        return groupLinkMappingRepository.findLinkByIdAndAccountNoAndGroupIdAndDel(mappingId, accountNo, groupId,0);
     }
 
     @Override
@@ -40,7 +40,7 @@ public class GroupLinkMappingManagerImpl implements GroupLinkMappingManager {
     @Override
     public boolean deleteShortLink(String shortLinkCode, Long accountNo, Long groupId) {
         try{
-            groupLinkMappingRepository.deleteGroupLinkMapping(shortLinkCode,accountNo,groupId);
+            groupLinkMappingRepository.deleteGroupLinkMapping(shortLinkCode,accountNo,groupId,0);
             return true;
         }catch (Exception e){
             log.error("Failed to delete the short link on user side.");
@@ -51,7 +51,7 @@ public class GroupLinkMappingManagerImpl implements GroupLinkMappingManager {
     @Override
     public Map<String, Object> pageShortLinkByGroupId(int page, int size, Long accountNo, Long groupId) {
 
-        Page<GroupLinkMapping> shortLinksPage = groupLinkMappingRepository.findAllByAccountNoAndGroupId(PageRequest.of(page, size), accountNo, groupId);
+        Page<GroupLinkMapping> shortLinksPage = groupLinkMappingRepository.findAllByAccountNoAndGroupIdAndDel(PageRequest.of(page, size), accountNo, groupId,0);
         Map<String,Object> pageInfo = new HashMap<>(3);
         pageInfo.put("total_records",shortLinksPage.getTotalElements());
         pageInfo.put("total_pages",shortLinksPage.getTotalPages());
@@ -67,7 +67,7 @@ public class GroupLinkMappingManagerImpl implements GroupLinkMappingManager {
     @Override
     public boolean updateGroup(Long accountNo, Long groupId, String shortLinkCode, ShortLinkStateEnum shortLinkStateEnum) {
         try{
-            groupLinkMappingRepository.updateGroupLinkMappingState(shortLinkCode,accountNo,groupId,shortLinkStateEnum.name());
+            groupLinkMappingRepository.updateGroupLinkMappingState(shortLinkCode,accountNo,groupId,shortLinkStateEnum.name(),0);
             return true;
         }catch (Exception e){
             log.error("Failed to delete the short link on user side.");
@@ -77,6 +77,6 @@ public class GroupLinkMappingManagerImpl implements GroupLinkMappingManager {
 
     @Override
     public GroupLinkMapping findShortLinkByCode(String shortLinkCode, Long groupId, Long accountNo) {
-        return groupLinkMappingRepository.findByCodeAndAccountNoAndGroupId(shortLinkCode, accountNo, groupId);
+        return groupLinkMappingRepository.findByCodeAndAccountNoAndGroupIdAndDel(shortLinkCode, accountNo, groupId,0);
     }
 }
