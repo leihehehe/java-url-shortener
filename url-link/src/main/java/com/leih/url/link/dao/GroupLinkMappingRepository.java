@@ -13,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Repository
 public interface GroupLinkMappingRepository extends JpaRepository<GroupLinkMapping, Long> {
   GroupLinkMapping findLinkByIdAndAccountNoAndGroupId(Long id, Long accountNo, Long groupId);
+  GroupLinkMapping findByCodeAndAccountNoAndGroupId(String code, Long accountNo, Long groupId);
 
   @Modifying
   @Transactional

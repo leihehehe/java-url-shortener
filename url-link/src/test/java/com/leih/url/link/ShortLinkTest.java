@@ -40,7 +40,7 @@ public class ShortLinkTest {
     linkGroupRepository.save(linkGroup);
   }
 
-  @Test
+/*  @Test
   public void testRandomDBPrefix() {
     for (int i = 0; i < 20; i++) {
       log.info(ShardingDBConfig.getRandomDBPrefix());
@@ -48,7 +48,7 @@ public class ShortLinkTest {
     for (int i = 0; i < 20; i++) {
       log.info(ShardingTableConfig.getRandomTableSuffix());
     }
-  }
+  }*/
 
   @Test
   public void testSaveShortLink() {
@@ -70,5 +70,14 @@ public class ShortLinkTest {
   public void testFindCode(){
     Link shortShortLinkByCode = shortLinkManager.findShortLinkByCode("13TXpI5a");
     log.info("query: {}", shortShortLinkByCode);
+  }
+
+  @Test
+  public void testGenerateCode(){
+    for(int i =0;i<5;i++){
+      String originalUrl = "https://leihehe.top";
+      String shortLink = shortLinkComponent.createShortLink(originalUrl);
+      System.out.println(shortLink);
+    }
   }
 }

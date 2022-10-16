@@ -11,6 +11,7 @@ public class ShardingTableConfig {
   static {
     tableSuffix.add("0");
     tableSuffix.add("a");
+    //more suffixes can be added here
   }
 
   /**
@@ -18,8 +19,9 @@ public class ShardingTableConfig {
    *
    * @return
    */
-  public static String getRandomTableSuffix() {
-    int index = random.nextInt(tableSuffix.size());
+  public static String getRandomTableSuffix(String code) {
+    int hashCode = code.hashCode();
+    int index = Math.abs(hashCode) % tableSuffix.size();
     return tableSuffix.get(index);
   }
 }
