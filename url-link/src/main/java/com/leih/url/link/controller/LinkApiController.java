@@ -63,7 +63,8 @@ public class LinkApiController {
       if (isShortLinkCode(shortLinkCode)) {
         LinkVo linkVo = shortLinkService.parseShortLinkCode(shortLinkCode);
         if (isShortLinkValid(linkVo)) {
-          response.setHeader("Location", linkVo.getOriginalUrl());
+          String newUrl = CommonUtil.removeUrlPrefix(linkVo.getOriginalUrl());
+          response.setHeader("Location", newUrl);
           // HTTP 302
           response.setStatus(HttpStatus.FOUND.value());
         } else {

@@ -6,12 +6,12 @@ import java.util.Random;
 
 public class ShardingDBConfig {
   private static final List<String> dbPrefix = new ArrayList<>();
-  private static final Random random = new Random();
 
   static {
     dbPrefix.add("0");
     dbPrefix.add("1");
     dbPrefix.add("a");
+    //more suffixes can be added here
   }
 
   /**
@@ -19,8 +19,9 @@ public class ShardingDBConfig {
    *
    * @return
    */
-  public static String getRandomDBPrefix() {
-    int index = random.nextInt(dbPrefix.size());
+  public static String getRandomDBPrefix(String shortLinkCode) {
+    int hashCode = shortLinkCode.hashCode();
+    int index = Math.abs(hashCode) % dbPrefix.size();
     return dbPrefix.get(index);
   }
 }
