@@ -27,7 +27,7 @@ public class ShortLinkAddLinkMQListener {
     public void shortLinkHandler(EventMessage eventMessage, Message message, Channel channel) throws IOException {
         log.info("Message received by ShortLinkAddLinkMQListener: {}",message);
         try{
-            eventMessage.setEventMessageType(EventMessageType.SHORT_LINK_ADD_MAPPING.name());
+            eventMessage.setEventMessageType(EventMessageType.SHORT_LINK_ADD_LINK.name());
             shortLinkService.handleAddShortLink(eventMessage);
         }catch (Exception e){
             log.error("Failed to handle message: {}",eventMessage);
