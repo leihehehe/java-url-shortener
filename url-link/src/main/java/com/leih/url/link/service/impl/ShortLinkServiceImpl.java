@@ -12,6 +12,7 @@ import com.leih.url.common.util.JsonUtil;
 import com.leih.url.link.component.ShortLinkComponent;
 import com.leih.url.link.config.RabbitMQConfig;
 import com.leih.url.link.controller.request.ShortLinkAddRequest;
+import com.leih.url.link.controller.request.ShortLinkPageRequest;
 import com.leih.url.link.entity.Domain;
 import com.leih.url.link.entity.GroupLinkMapping;
 import com.leih.url.link.entity.Link;
@@ -32,6 +33,7 @@ import org.springframework.data.redis.core.script.DefaultRedisScript;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 @Service
@@ -181,6 +183,19 @@ public class ShortLinkServiceImpl implements ShortLinkService {
       handleAddShortLink(eventMessage);
     }
     return false;
+  }
+
+  /**
+   * Query from the table group_link_mapping
+   * @param request
+   * @return
+   */
+  @Override
+  public Map<String, Object> pageByGroupId(ShortLinkPageRequest request) {
+    Long accountNo = LoginInterceptor.threadLocal.get().getAccountNo();
+    Map<String, Object> result = groupLinkMappingManager.pageShortLinkByGroupId(
+            request.getPage(), request.getSize(), accountNo, request.getGroupId());
+    return result;
   }
 
   /**

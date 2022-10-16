@@ -12,26 +12,31 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Repository
 public interface GroupLinkMappingRepository extends JpaRepository<GroupLinkMapping, Long> {
-  GroupLinkMapping findLinkByIdAndAccountNoAndGroupId(Long id, Long accountNo, Long groupId);
-  GroupLinkMapping findByCodeAndAccountNoAndGroupId(String code, Long accountNo, Long groupId);
+  GroupLinkMapping findLinkByIdAndAccountNoAndGroupIdAndDel(Long id, Long accountNo, Long groupId,int del);
+
+  GroupLinkMapping findByCodeAndAccountNoAndGroupIdAndDel(String code, Long accountNo, Long groupId,int del);
 
   @Modifying
   @Transactional
   @Query(
-      "update GroupLinkMapping set del=1 where code=:code and accountNo=:accountNo and groupId=:groupId")
+      "update GroupLinkMapping set del=1 where code=:code and accountNo=:accountNo and groupId=:groupId and del=:del")
   int deleteGroupLinkMapping(
       @Param("code") String shortLinkCode,
       @Param("accountNo") Long accountNo,
-      @Param("groupId") Long groupId);
+      @Param("groupId") Long groupId,
+      @Param("del") int del);
+
   @Modifying
   @Transactional
   @Query(
-          "update GroupLinkMapping set state=:state where code=:code and accountNo=:accountNo and groupId=:groupId")
+      "update GroupLinkMapping set state=:state where code=:code and accountNo=:accountNo and groupId=:groupId and del=:del")
   int updateGroupLinkMappingState(
-          @Param("code") String shortLinkCode,
-          @Param("accountNo") Long accountNo,
-          @Param("groupId") Long groupId,
-          @Param("state") String state);
-  Page<GroupLinkMapping> findAllByAccountNoAndGroupId(
-      Pageable pageable, Long accountNo, Long groupId);
+      @Param("code") String shortLinkCode,
+      @Param("accountNo") Long accountNo,
+      @Param("groupId") Long groupId,
+      @Param("state") String state,
+      @Param("del") int del);
+
+  Page<GroupLinkMapping> findAllByAccountNoAndGroupIdAndDel(
+      Pageable pageable, Long accountNo, Long groupId, int del);
 }
