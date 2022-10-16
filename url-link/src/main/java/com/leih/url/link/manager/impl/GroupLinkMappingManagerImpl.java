@@ -74,4 +74,9 @@ public class GroupLinkMappingManagerImpl implements GroupLinkMappingManager {
             return false;
         }
     }
+
+    @Override
+    public GroupLinkMapping findShortLinkByCode(String shortLinkCode, Long groupId, Long accountNo) {
+        return groupLinkMappingRepository.findByCodeAndAccountNoAndGroupId(shortLinkCode, accountNo, groupId);
+    }
 }

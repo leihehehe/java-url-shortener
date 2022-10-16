@@ -166,4 +166,34 @@ public class CommonUtil {
   public static long MurmurHash(String param){
     return Hashing.murmur3_32().hashUnencodedChars(param).padToLong();
   }
+
+  /**
+   * Add prefix for url
+   * @return
+   */
+  public static String addUrlPrefix(String url){
+    return IdUtil.generateSnowFlakeId()+"|"+url;
+  }
+
+  /**
+   * Remove prefix for url
+   * @param url
+   * @return
+   */
+  public static String removeUrlPrefix(String url){
+    return url.substring(url.indexOf("|")+1);
+  }
+
+  /**
+   * Used to resolve the url conflict
+   * @param url
+   * @return
+   */
+  public static String addUrlPrefixVersion(String url){
+    String version = url.substring(0, url.indexOf("|"));
+    String originalUrl = url.substring(url.indexOf("|")+1);
+    Long newVersion = Long.parseLong(version)+1;
+    String newUrl = newVersion+"|"+originalUrl;
+    return newUrl;
+  }
 }

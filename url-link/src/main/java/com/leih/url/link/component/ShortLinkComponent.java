@@ -16,7 +16,7 @@ public class ShortLinkComponent {
     public String createShortLink(String originalUrl){
         long murmurHash = CommonUtil.MurmurHash(originalUrl);
         String code = encodeToBase62(murmurHash);
-        String shortLinkCode = ShardingDBConfig.getRandomDBPrefix()+code+ ShardingTableConfig.getRandomTableSuffix();
+        String shortLinkCode = ShardingDBConfig.getRandomDBPrefix(code)+code+ ShardingTableConfig.getRandomTableSuffix(code);
         return shortLinkCode;
     }
 
