@@ -27,7 +27,12 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.script.DefaultRedisScript;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 @Service
 @Slf4j
@@ -40,6 +45,8 @@ public class ShortLinkServiceImpl implements ShortLinkService {
   @Autowired private LinkGroupManager linkGroupManager;
   @Autowired private GroupLinkMappingManager groupLinkMappingManager;
   @Autowired private ShortLinkComponent shortLinkComponent;
+  @Autowired private RedisTemplate<Object, Object> redisTemplate;
+
   @Override
   public LinkVo parseShortLinkCode(String shortLinkCode) {
     Link shortLink = shortLinkManager.findShortLinkByCode(shortLinkCode);
@@ -55,6 +62,9 @@ public class ShortLinkServiceImpl implements ShortLinkService {
   @Override
   public JsonData createShortLink(ShortLinkAddRequest request) {
     Long accountNo = LoginInterceptor.threadLocal.get().getAccountNo();
+    // avoid url conflicts
+    String newOriginalUrl = CommonUtil.addUrlPrefix(request.getOriginalUrl());
+    request.setOriginalUrl(newOriginalUrl);
     EventMessage eventMessage =
         EventMessage.builder()
             .accountNo(accountNo)
@@ -70,8 +80,8 @@ public class ShortLinkServiceImpl implements ShortLinkService {
   }
 
   /**
-   * Add short link in terms of event message type
-   * Add short link to link/mapping tables
+   * Add short link in terms of event message type Add short link to link/mapping tables
+   *
    * @param eventMessage
    * @return
    */
@@ -79,50 +89,97 @@ public class ShortLinkServiceImpl implements ShortLinkService {
   public boolean handleAddShortLink(EventMessage eventMessage) {
     Long accountNo = eventMessage.getAccountNo();
     String eventMessageType = eventMessage.getEventMessageType();
-    //get request
+    // get request
     ShortLinkAddRequest shortLinkAddRequest =
         JsonUtil.json2Obj(eventMessage.getContent(), ShortLinkAddRequest.class);
-    //get domain
-    Domain domain = checkDomain(shortLinkAddRequest.getDomainType(), shortLinkAddRequest.getDomainId(), accountNo);
-    //get group
+    // get domain
+    Domain domain =
+        checkDomain(
+            shortLinkAddRequest.getDomainType(), shortLinkAddRequest.getDomainId(), accountNo);
+    // get group
     LinkGroup linkGroup = checkLinkGroup(shortLinkAddRequest.getGroupId(), accountNo);
-    //get digest of the original url
+    // get digest of the original url
     String originalUrlDigest = CommonUtil.MD5(shortLinkAddRequest.getOriginalUrl());
     String shortLinkCode = shortLinkComponent.createShortLink(shortLinkAddRequest.getOriginalUrl());
-    //TODO: add a lock for the following action
-    Link shortLinkInDB = shortLinkManager.findShortLinkByCode(shortLinkCode);
-    //short link code is not used in the database
-    if(shortLinkInDB==null){
-      if(EventMessageType.SHORT_LINK_ADD_LINK.name().equalsIgnoreCase(eventMessageType)){
-        Link shortLink = Link.builder().accountNo(accountNo)
-                .code(shortLinkCode)
-                .name(shortLinkAddRequest.getName())
-                .originalUrl(shortLinkAddRequest.getOriginalUrl())
-                .domain(domain.getValue())
-                .groupId(linkGroup.getId())
-                .expired(shortLinkAddRequest.getExpired())
-                .sign(originalUrlDigest)
-                .state(ShortLinkStateEnum.ACTIVATED.name())
-                .del(0)
-                .build();
-        return shortLinkManager.addShortLink(shortLink);
+    // add a distributed lock for the following action
+    String script =
+        // check if the key(short link code) exist in the redis
+        "if redis.call('EXISTS',KEYS[1])==0 then redis.call('set',KEYS[1],ARGV[1]); "
+            // if it does not exist, set key and expire
+            + "redis.call('expire',KEYS[1],ARGV[2]); return 1;"
+            // if it does exist, and the accountNo is the same, return 2
+            + " elseif redis.call('get',KEYS[1]) == ARGV[1] then return 2;"
+            + " else return 0; end;";
+    Long result =
+        redisTemplate.execute(
+            new DefaultRedisScript<>(script, Long.class), List.of(shortLinkCode), accountNo, 100);
+    boolean success = true;
+    if (result > 0) {
+      // successfully add a lock
+      if (EventMessageType.SHORT_LINK_ADD_LINK.name().equalsIgnoreCase(eventMessageType)) {
+        Link shortLinkInDB = shortLinkManager.findShortLinkByCode(shortLinkCode);
+        if (shortLinkInDB == null) {
+          // short link code is not used in the database
+          Link shortLink =
+              Link.builder()
+                  .accountNo(accountNo)
+                  .code(shortLinkCode)
+                  .name(shortLinkAddRequest.getName())
+                  .originalUrl(shortLinkAddRequest.getOriginalUrl())
+                  .domain(domain.getValue())
+                  .groupId(linkGroup.getId())
+                  .expired(shortLinkAddRequest.getExpired())
+                  .sign(originalUrlDigest)
+                  .state(ShortLinkStateEnum.ACTIVATED.name())
+                  .del(0)
+                  .build();
+          return shortLinkManager.addShortLink(shortLink);
+        } else {
+          log.error("Short link exists in the link tables:{}", eventMessage);
+          success = false;
+        }
+      } else if (EventMessageType.SHORT_LINK_ADD_MAPPING
+          .name()
+          .equalsIgnoreCase(eventMessageType)) {
+        GroupLinkMapping groupLinkMappingInDB =
+            groupLinkMappingManager.findShortLinkByCode(
+                shortLinkCode, linkGroup.getId(), accountNo);
+        if (groupLinkMappingInDB == null) {
+          GroupLinkMapping groupLinkMapping =
+              GroupLinkMapping.builder()
+                  .accountNo(accountNo)
+                  .code(shortLinkCode)
+                  .name(shortLinkAddRequest.getName())
+                  .originalUrl(shortLinkAddRequest.getOriginalUrl())
+                  .domain(domain.getValue())
+                  .groupId(linkGroup.getId())
+                  .expired(shortLinkAddRequest.getExpired())
+                  .sign(originalUrlDigest)
+                  .state(ShortLinkStateEnum.ACTIVATED.name())
+                  .del(0)
+                  .build();
+          return groupLinkMappingManager.addShortLink(groupLinkMapping);
+        } else {
+          log.error("Group link mapping exists in the mapping tables:{}", eventMessage);
+          success = false;
+        }
       }
-      else if(EventMessageType.SHORT_LINK_ADD_MAPPING.name().equalsIgnoreCase(eventMessageType)){
-        GroupLinkMapping groupLinkMapping = GroupLinkMapping.builder().accountNo(accountNo)
-                .code(shortLinkCode)
-                .name(shortLinkAddRequest.getName())
-                .originalUrl(shortLinkAddRequest.getOriginalUrl())
-                .domain(domain.getValue())
-                .groupId(linkGroup.getId())
-                .expired(shortLinkAddRequest.getExpired())
-                .sign(originalUrlDigest)
-                .state(ShortLinkStateEnum.ACTIVATED.name())
-                .del(0)
-                .build();
-        return groupLinkMappingManager.addShortLink(groupLinkMapping);
-      }
-    }
+    } else {
+      // failed
+      log.error("Filed to add lock:{}", eventMessage);
 
+      try {
+        TimeUnit.MILLISECONDS.sleep(100);
+      } catch (InterruptedException e) {
+      }
+      success = false;
+    }
+    if (!success) {
+      String newOriginalUrl = CommonUtil.addUrlPrefixVersion(shortLinkAddRequest.getOriginalUrl());
+      shortLinkAddRequest.setOriginalUrl(newOriginalUrl);
+      eventMessage.setContent(JsonUtil.obj2Json(shortLinkAddRequest));
+      handleAddShortLink(eventMessage);
+    }
     return false;
   }
 
@@ -145,9 +202,9 @@ public class ShortLinkServiceImpl implements ShortLinkService {
     return domain;
   }
 
-  private LinkGroup checkLinkGroup(Long groupId,Long accountNo){
+  private LinkGroup checkLinkGroup(Long groupId, Long accountNo) {
     LinkGroup group = linkGroupManager.getGroup(accountNo, groupId);
-    Assert.notNull(group,"Invalid group name");
+    Assert.notNull(group, "Invalid group name");
     return group;
   }
 }
