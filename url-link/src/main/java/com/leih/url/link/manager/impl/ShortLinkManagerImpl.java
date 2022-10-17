@@ -34,12 +34,12 @@ public class ShortLinkManagerImpl implements ShortLinkManager {
     }
 
     @Override
-    public boolean deleteShortLink(String linkCode, Long accountNo) {
+    public boolean deleteShortLink(Link shortLink) {
         try{
-            linkRepository.deleteShortLink(linkCode,accountNo);
+      linkRepository.deleteShortLink(shortLink.getCode(), shortLink.getAccountNo());
             return true;
         }catch (Exception e){
-            log.error("Failed to delete the short link code: {};\nexception: {}", linkCode, e.getMessage());
+            log.error("Failed to delete the short link code: {};\nexception: {}", shortLink.getCode(), e.getMessage());
             return false;
         }
 
