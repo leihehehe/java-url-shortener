@@ -8,7 +8,7 @@ import java.util.Map;
 public interface GroupLinkMappingManager {
     GroupLinkMapping findShortLinkByGroupIdAndMappingId(Long mappingId, Long accountNo, Long groupId);
     boolean addShortLink(GroupLinkMapping groupLinkMapping);
-    boolean deleteShortLink(String shortLinkCode, Long accountNo, Long groupId);
+    boolean deleteShortLink(GroupLinkMapping groupLinkMapping);
     Map<String, Object> pageShortLinkByGroupId(int page, int size, Long accountNo,Long groupId);
 
     /**
