@@ -11,38 +11,137 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 @Data
 public class RabbitMQConfig {
-    /***
-     * Switch
-     */
-    private String shortLinkEventExchange ="short_link.event.exchange";
+  /***
+   * Switch
+   */
+  private String shortLinkEventExchange = "short_link.event.exchange";
+  /** ADD config */
+  private String shortLinkAddLinkQueue = "short_link.add.link.queue";
+  private String shortLinkAddMappingQueue = "short_link.add.mapping.queue";
+  private String shortLinkAddRoutingKey = "short_link.add.link.mapping.routing.key";
+  private String shortLinkAddLinkBindingKey = "short_link.add.link.*.routing.key";
+  private String shortLinkAddMappingBindingKey = "short_link.add.*.mapping.routing.key";
+  /** DELETE config */
+  private String shortLinkDelLinkQueue = "short_link.del.link.queue";
+  private String shortLinkDelMappingQueue = "short_link.del.mapping.queue";
+  private String shortLinkDelRoutingKey = "short_link.del.link.mapping.routing.key";
+  private String shortLinkDelLinkBindingKey = "short_link.del.link.*.routing.key";
+  private String shortLinkDelMappingBindingKey = "short_link.del.*.mapping.routing.key";
+  /** UPDATE config */
+  private String shortLinkUpdateLinkQueue = "short_link.update.link.queue";
+  private String shortLinkUpdateMappingQueue = "short_link.update.mapping.queue";
+  private String shortLinkUpdateRoutingKey = "short_link.update.link.mapping.routing.key";
+  private String shortLinkUpdateLinkBindingKey = "short_link.update.link.*.routing.key";
+  private String shortLinkUpdateMappingBindingKey = "short_link.update.*.mapping.routing.key";
 
-    /**
-     * Usually one service one switch
-     * @return
-     */
-    @Bean
-    public Exchange shortLinkEventExchange(){
-        return new TopicExchange(shortLinkEventExchange,true,false);
-    }
-    private String shortLinkAddLinkQueue="short_link.add.link.queue";
-    private String shortLinkAddMappingQueue="short_link.add.mapping.queue";
-    private String shortLinkAddRoutingKey="short_link.add.link.mapping.routing.key";
-    private String shortLinkAddLinkBindingKey="short_link.add.link.*.routing.key";
-    private String shortLinkAddMappingBindingKey="short_link.add.*.mapping.routing.key";
-    @Bean
-    public Binding shortLinkAddLinkBinding(){
-        return new Binding(shortLinkAddLinkQueue,Binding.DestinationType.QUEUE, shortLinkEventExchange,shortLinkAddLinkBindingKey,null);
-    }
-    @Bean
-    public Binding shortLinkAddMappingBinding(){
-        return new Binding(shortLinkAddMappingQueue,Binding.DestinationType.QUEUE, shortLinkEventExchange,shortLinkAddMappingBindingKey,null);
-    }
-    @Bean
-    public Queue shortLinkAddLinkQueue(){
-        return new Queue(shortLinkAddLinkQueue,true,false,false);
-    }
-    @Bean
-    public Queue shortLinkMappingQueue(){
-        return new Queue(shortLinkAddMappingQueue,true,false,false);
-    }
+  /**
+   * Usually one service one switch
+   *
+   * @return
+   */
+  @Bean
+  public Exchange shortLinkEventExchange() {
+    return new TopicExchange(shortLinkEventExchange, true, false);
+  }
+
+  /**
+   * ADD CONFIG
+   * @return
+   */
+  @Bean
+  public Binding shortLinkAddLinkBinding() {
+    return new Binding(
+        shortLinkAddLinkQueue,
+        Binding.DestinationType.QUEUE,
+        shortLinkEventExchange,
+        shortLinkAddLinkBindingKey,
+        null);
+  }
+
+  @Bean
+  public Binding shortLinkAddMappingBinding() {
+    return new Binding(
+        shortLinkAddMappingQueue,
+        Binding.DestinationType.QUEUE,
+        shortLinkEventExchange,
+        shortLinkAddMappingBindingKey,
+        null);
+  }
+
+  @Bean
+  public Queue shortLinkAddLinkQueue() {
+    return new Queue(shortLinkAddLinkQueue, true, false, false);
+  }
+
+  @Bean
+  public Queue shortLinkAddMappingQueue() {
+    return new Queue(shortLinkAddMappingQueue, true, false, false);
+  }
+
+  /**
+   * DELETE CONFIG
+   * @return
+   */
+  @Bean
+  public Binding shortLinkDelLinkBinding() {
+    return new Binding(
+        shortLinkDelLinkQueue,
+        Binding.DestinationType.QUEUE,
+        shortLinkEventExchange,
+        shortLinkDelLinkBindingKey,
+        null);
+  }
+
+  @Bean
+  public Binding shortLinkDelMappingBinding() {
+    return new Binding(
+        shortLinkDelMappingQueue,
+        Binding.DestinationType.QUEUE,
+        shortLinkEventExchange,
+        shortLinkDelMappingBindingKey,
+        null);
+  }
+
+  @Bean
+  public Queue shortLinkDelLinkQueue() {
+    return new Queue(shortLinkDelLinkQueue, true, false, false);
+  }
+
+  @Bean
+  public Queue shortLinkDelMappingQueue() {
+    return new Queue(shortLinkDelMappingQueue, true, false, false);
+  }
+
+  /**
+   * UPDATE config
+   * @return
+   */
+  @Bean
+  public Binding shortLinkUpdateLinkBinding() {
+    return new Binding(
+            shortLinkUpdateLinkQueue,
+            Binding.DestinationType.QUEUE,
+            shortLinkEventExchange,
+            shortLinkUpdateLinkBindingKey,
+            null);
+  }
+
+  @Bean
+  public Binding shortLinkUpdateMappingBinding() {
+    return new Binding(
+            shortLinkUpdateMappingQueue,
+            Binding.DestinationType.QUEUE,
+            shortLinkEventExchange,
+            shortLinkUpdateMappingBindingKey,
+            null);
+  }
+  @Bean
+  public Queue shortLinkUpdateLinkQueue() {
+    return new Queue(shortLinkUpdateLinkQueue, true, false, false);
+  }
+
+  @Bean
+  public Queue shortLinkUpdateMappingQueue() {
+    return new Queue(shortLinkUpdateMappingQueue, true, false, false);
+  }
 }
