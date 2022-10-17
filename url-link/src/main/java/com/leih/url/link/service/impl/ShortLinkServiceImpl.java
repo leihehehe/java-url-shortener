@@ -12,7 +12,9 @@ import com.leih.url.common.util.JsonUtil;
 import com.leih.url.link.component.ShortLinkComponent;
 import com.leih.url.link.config.RabbitMQConfig;
 import com.leih.url.link.controller.request.ShortLinkAddRequest;
+import com.leih.url.link.controller.request.ShortLinkDeleteRequest;
 import com.leih.url.link.controller.request.ShortLinkPageRequest;
+import com.leih.url.link.controller.request.ShortLinkUpdateRequest;
 import com.leih.url.link.entity.Domain;
 import com.leih.url.link.entity.GroupLinkMapping;
 import com.leih.url.link.entity.Link;
@@ -186,16 +188,91 @@ public class ShortLinkServiceImpl implements ShortLinkService {
   }
 
   /**
+   * Handle update requests
+   *
+   * @param eventMessage
+   * @return
+   */
+  public boolean handleUpdateShortLink(EventMessage eventMessage) {
+    Long accountNo = eventMessage.getAccountNo();
+    String eventMessageType = eventMessage.getEventMessageType();
+    ShortLinkUpdateRequest request =
+        JsonUtil.json2Obj(eventMessage.getContent(), ShortLinkUpdateRequest.class);
+    Domain domain = checkDomain(request.getDomainType(), request.getDomainId(), accountNo);
+    if (EventMessageType.SHORT_LINK_UPDATE_LINK.name().equalsIgnoreCase(eventMessageType)) {
+      Link updatedLink =
+          Link.builder()
+              .code(request.getCode())
+              .name(request.getName())
+              .domain(domain.getValue())
+              .accountNo(accountNo)
+              .build();
+      log.info("Updating short link for short_link table");
+      return shortLinkManager.updateShortLink(updatedLink);
+    } else if (EventMessageType.SHORT_LINK_UPDATE_MAPPING
+        .name()
+        .equalsIgnoreCase(eventMessageType)) {
+      GroupLinkMapping updatedLinkMapping =
+          GroupLinkMapping.builder()
+              .id(request.getMappingId())
+              .groupId(request.getGroupId())
+              .accountNo(accountNo)
+              .name(request.getName())
+              .domain(domain.getValue())
+              .build();
+      log.info("Updating short link for group_link_mapping table");
+      return groupLinkMappingManager.updateGroupMapping(updatedLinkMapping);
+    }
+    return false;
+  }
+
+  /**
    * Query from the table group_link_mapping
+   *
    * @param request
    * @return
    */
   @Override
   public Map<String, Object> pageByGroupId(ShortLinkPageRequest request) {
     Long accountNo = LoginInterceptor.threadLocal.get().getAccountNo();
-    Map<String, Object> result = groupLinkMappingManager.pageShortLinkByGroupId(
+    Map<String, Object> result =
+        groupLinkMappingManager.pageShortLinkByGroupId(
             request.getPage(), request.getSize(), accountNo, request.getGroupId());
     return result;
+  }
+
+  @Override
+  public JsonData deleteShortLink(ShortLinkDeleteRequest request) {
+    Long accountNo = LoginInterceptor.threadLocal.get().getAccountNo();
+    EventMessage eventMessage =
+        EventMessage.builder()
+            .accountNo(accountNo)
+            .content(JsonUtil.obj2Json(request))
+            .messageId(IdUtil.generateSnowFlakeId().toString())
+            .eventMessageType(EventMessageType.SHORT_LINK_DELETE.name())
+            .build();
+    rabbitTemplate.convertAndSend(
+        rabbitMQConfig.getShortLinkEventExchange(),
+        rabbitMQConfig.getShortLinkDelRoutingKey(),
+        eventMessage);
+    return JsonData.buildSuccess();
+  }
+
+  @Override
+  public JsonData updateShortLink(ShortLinkUpdateRequest request) {
+    Long accountNo = LoginInterceptor.threadLocal.get().getAccountNo();
+    EventMessage eventMessage =
+        EventMessage.builder()
+            .accountNo(accountNo)
+            .content(JsonUtil.obj2Json(request))
+            .messageId(IdUtil.generateSnowFlakeId().toString())
+            .eventMessageType(EventMessageType.SHORT_LINK_UPDATE.name())
+            .build();
+    rabbitTemplate.convertAndSend(
+        rabbitMQConfig.getShortLinkEventExchange(),
+        rabbitMQConfig.getShortLinkUpdateRoutingKey(),
+        eventMessage);
+    return JsonData.buildSuccess();
   }
 
   /**
