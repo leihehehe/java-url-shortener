@@ -14,7 +14,7 @@ public class DomainVo {
 
   private int del;
 
-  private long accountNo;
+  private Long accountNo;
 
   private Timestamp gmtCreate;
 
