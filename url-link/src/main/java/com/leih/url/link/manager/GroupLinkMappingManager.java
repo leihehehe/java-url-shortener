@@ -2,7 +2,6 @@ package com.leih.url.link.manager;
 
 import com.leih.url.common.enums.ShortLinkStateEnum;
 import com.leih.url.link.entity.GroupLinkMapping;
-import com.leih.url.link.entity.Link;
 
 import java.util.Map;
 
@@ -11,7 +10,24 @@ public interface GroupLinkMappingManager {
     boolean addShortLink(GroupLinkMapping groupLinkMapping);
     boolean deleteShortLink(String shortLinkCode, Long accountNo, Long groupId);
     Map<String, Object> pageShortLinkByGroupId(int page, int size, Long accountNo,Long groupId);
-    boolean updateGroup(Long accountNo, Long groupId, String shortLinkCode, ShortLinkStateEnum shortLinkStateEnum);
+
+    /**
+     * Admin update
+     * @param accountNo
+     * @param groupId
+     * @param shortLinkCode
+     * @param shortLinkStateEnum
+     * @return
+     */
+    boolean updateGroupMapping(Long accountNo, Long groupId, String shortLinkCode, ShortLinkStateEnum shortLinkStateEnum);
+
+
+    /**
+     * User update
+     * @param groupLinkMapping
+     * @return
+     */
+    boolean updateGroupMapping(GroupLinkMapping groupLinkMapping);
 
     GroupLinkMapping findShortLinkByCode(String shortLinkCode, Long id, Long accountNo);
 }

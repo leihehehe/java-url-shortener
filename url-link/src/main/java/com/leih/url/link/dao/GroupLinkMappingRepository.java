@@ -19,23 +19,31 @@ public interface GroupLinkMappingRepository extends JpaRepository<GroupLinkMappi
   @Modifying
   @Transactional
   @Query(
-      "update GroupLinkMapping set del=1 where code=:code and accountNo=:accountNo and groupId=:groupId and del=:del")
+      "update GroupLinkMapping set del=1 where code=:code and accountNo=:accountNo and groupId=:groupId and del=0")
   int deleteGroupLinkMapping(
       @Param("code") String shortLinkCode,
       @Param("accountNo") Long accountNo,
-      @Param("groupId") Long groupId,
-      @Param("del") int del);
+      @Param("groupId") Long groupId);
 
   @Modifying
   @Transactional
   @Query(
-      "update GroupLinkMapping set state=:state where code=:code and accountNo=:accountNo and groupId=:groupId and del=:del")
+      "update GroupLinkMapping set state=:state where code=:code and accountNo=:accountNo and groupId=:groupId and del=0")
   int updateGroupLinkMappingState(
       @Param("code") String shortLinkCode,
       @Param("accountNo") Long accountNo,
       @Param("groupId") Long groupId,
-      @Param("state") String state,
-      @Param("del") int del);
+      @Param("state") String state);
+  @Modifying
+  @Transactional
+  @Query(
+          "update GroupLinkMapping set name=:name, domain=:domain where id=:id and accountNo=:accountNo and groupId=:groupId and del=0")
+  int updateGroupLinkMapping(
+          @Param("id") Long id,
+          @Param("accountNo") Long accountNo,
+          @Param("groupId") Long groupId,
+          @Param("name") String name,
+          @Param("domain") String domain);
 
   Page<GroupLinkMapping> findAllByAccountNoAndGroupIdAndDel(
       Pageable pageable, Long accountNo, Long groupId, int del);

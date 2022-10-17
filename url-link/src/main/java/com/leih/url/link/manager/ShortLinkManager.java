@@ -5,5 +5,8 @@ import com.leih.url.link.entity.Link;
 public interface ShortLinkManager {
     boolean addShortLink(Link shortLink);
     Link findShortLinkByCode(String linkCode);
-    boolean deleteShortLink(String linkCode);
+    boolean deleteShortLink(String linkCode,Long accountNo);
+
+    boolean updateShortLink(Link updatedLink);
+
 }
