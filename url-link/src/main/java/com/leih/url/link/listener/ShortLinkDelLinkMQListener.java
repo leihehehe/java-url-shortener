@@ -27,7 +27,7 @@ public class ShortLinkDelLinkMQListener {
         log.info("Message received by ShortLinkAddLinkMQListener: {}",message);
         try{
             eventMessage.setEventMessageType(EventMessageType.SHORT_LINK_DELETE_LINK.name());
-
+            shortLinkService.handleDeleteShortLink(eventMessage);
         }catch (Exception e){
             log.error("Failed to handle message: {}",eventMessage);
             throw new BizException(BizCodeEnum.MQ_CONSUMER_EXCEPTION);

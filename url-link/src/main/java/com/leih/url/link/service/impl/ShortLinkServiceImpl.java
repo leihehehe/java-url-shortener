@@ -148,6 +148,7 @@ public class ShortLinkServiceImpl implements ShortLinkService {
         GroupLinkMapping groupLinkMappingInDB =
             groupLinkMappingManager.findShortLinkByCode(
                 shortLinkCode, linkGroup.getId(), accountNo);
+        //check if group link mapping exists
         if (groupLinkMappingInDB == null) {
           GroupLinkMapping groupLinkMapping =
               GroupLinkMapping.builder()
@@ -235,7 +236,7 @@ public class ShortLinkServiceImpl implements ShortLinkService {
     if (EventMessageType.SHORT_LINK_DELETE_LINK.name().equalsIgnoreCase(eventMessageType)) {
       Link shortLink = Link.builder().code(request.getCode()).accountNo(accountNo).build();
       return shortLinkManager.deleteShortLink(shortLink);
-    } else if (EventMessageType.SHORT_LINK_ADD_MAPPING.name().equalsIgnoreCase(eventMessageType)) {
+    } else if (EventMessageType.SHORT_LINK_DELETE_MAPPING.name().equalsIgnoreCase(eventMessageType)) {
       GroupLinkMapping groupLinkMapping =
           GroupLinkMapping.builder()
               .groupId(request.getGroupId())
