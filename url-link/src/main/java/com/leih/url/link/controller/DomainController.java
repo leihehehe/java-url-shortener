@@ -20,7 +20,6 @@ import java.util.List;
 @RequestMapping("/api/domain/v1/")
 public class DomainController {
   @Autowired DomainService domainService;
-  @Autowired private RedisTemplate<Object, Object> redisTemplate;
 
   @GetMapping("list")
   public JsonData listAllDomains() {
@@ -28,20 +27,4 @@ public class DomainController {
     return JsonData.buildSuccess(domainVos);
   }
 
-//  @GetMapping("test")
-//  public JsonData test(
-//      @RequestParam(name = "code") String code, @RequestParam(name = "accountNo") Long accountNo) {
-//    String script =
-//        // check if the key(short link code) exist in the redis
-//        "if redis.call('EXISTS',KEYS[1])==0 then redis.call('set',KEYS[1],ARGV[1]); "
-//            // if it does not exist, set key and expire
-//            + "redis.call('expire',KEYS[1],ARGV[2]); return 1;"
-//            // if it does exist, and the accountNo is the same, return 2
-//            + " elseif redis.call('get',KEYS[1]) == ARGV[1] then return 2;"
-//            + " else return 0; end;";
-//    Long result =
-//        redisTemplate.execute(
-//            new DefaultRedisScript<>(script, Long.class), List.of(code), accountNo, 100);
-//    return JsonData.buildSuccess(result);
-//  }
 }
