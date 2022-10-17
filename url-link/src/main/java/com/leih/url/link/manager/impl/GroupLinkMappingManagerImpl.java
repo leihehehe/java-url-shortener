@@ -40,9 +40,12 @@ public class GroupLinkMappingManagerImpl implements GroupLinkMappingManager {
   }
 
   @Override
-  public boolean deleteShortLink(String shortLinkCode, Long accountNo, Long groupId) {
+  public boolean deleteShortLink(GroupLinkMapping groupLinkMapping) {
     try {
-      groupLinkMappingRepository.deleteGroupLinkMapping(shortLinkCode, accountNo, groupId);
+      groupLinkMappingRepository.deleteGroupLinkMapping(
+          groupLinkMapping.getCode(),
+          groupLinkMapping.getAccountNo(),
+          groupLinkMapping.getGroupId());
       return true;
     } catch (Exception e) {
       log.error("Failed to delete the short link on user side.");

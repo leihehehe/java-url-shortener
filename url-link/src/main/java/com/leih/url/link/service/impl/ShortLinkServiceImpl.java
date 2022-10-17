@@ -226,6 +226,27 @@ public class ShortLinkServiceImpl implements ShortLinkService {
     return false;
   }
 
+  @Override
+  public boolean handleDeleteShortLink(EventMessage eventMessage) {
+    Long accountNo = eventMessage.getAccountNo();
+    String eventMessageType = eventMessage.getEventMessageType();
+    ShortLinkDeleteRequest request =
+        JsonUtil.json2Obj(eventMessage.getContent(), ShortLinkDeleteRequest.class);
+    if (EventMessageType.SHORT_LINK_DELETE_LINK.name().equalsIgnoreCase(eventMessageType)) {
+      Link shortLink = Link.builder().code(request.getCode()).accountNo(accountNo).build();
+      return shortLinkManager.deleteShortLink(shortLink);
+    } else if (EventMessageType.SHORT_LINK_ADD_MAPPING.name().equalsIgnoreCase(eventMessageType)) {
+      GroupLinkMapping groupLinkMapping =
+          GroupLinkMapping.builder()
+              .groupId(request.getGroupId())
+              .accountNo(accountNo)
+              .id(request.getMappingId())
+              .build();
+      return groupLinkMappingManager.deleteShortLink(groupLinkMapping);
+    }
+    return false;
+  }
+
   /**
    * Query from the table group_link_mapping
    *
