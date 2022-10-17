@@ -19,9 +19,9 @@ public interface GroupLinkMappingRepository extends JpaRepository<GroupLinkMappi
   @Modifying
   @Transactional
   @Query(
-      "update GroupLinkMapping set del=1 where code=:code and accountNo=:accountNo and groupId=:groupId and del=0")
+      "update GroupLinkMapping set del=1 where id=:mappingId and accountNo=:accountNo and groupId=:groupId and del=0")
   int deleteGroupLinkMapping(
-      @Param("code") String shortLinkCode,
+      @Param("mappingId") Long mappingId,
       @Param("accountNo") Long accountNo,
       @Param("groupId") Long groupId);
 

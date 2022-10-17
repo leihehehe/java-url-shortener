@@ -43,7 +43,7 @@ public class GroupLinkMappingManagerImpl implements GroupLinkMappingManager {
   public boolean deleteShortLink(GroupLinkMapping groupLinkMapping) {
     try {
       groupLinkMappingRepository.deleteGroupLinkMapping(
-          groupLinkMapping.getCode(),
+          groupLinkMapping.getId(),
           groupLinkMapping.getAccountNo(),
           groupLinkMapping.getGroupId());
       return true;

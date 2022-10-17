@@ -27,7 +27,7 @@ public class ShortLinkDelMappingMQListener {
         log.info("Message received by ShortLinkDelMappingMQListener: {}",message);
         try{
             eventMessage.setEventMessageType(EventMessageType.SHORT_LINK_DELETE_MAPPING.name());
-
+            shortLinkService.handleDeleteShortLink(eventMessage);
         }catch (Exception e){
             log.error("Failed to handle message: {}",eventMessage);
             throw new BizException(BizCodeEnum.MQ_CONSUMER_EXCEPTION);
