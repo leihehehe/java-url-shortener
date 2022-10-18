@@ -13,7 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 public interface ProductOrderRepository extends JpaRepository<ProductOrder,Long> {
-    ProductOrder findByOrderNoAndAccountNoAndDel(Long orderNo, Long accountNo,int del);
+    ProductOrder findByOrderNoAndAccountNoAndDel(String orderNo, Long accountNo,int del);
 
     @Transactional
     @Modifying

@@ -28,9 +28,9 @@ public enum BizCodeEnum {
   /** Short url */
   SHORT_LINK_NOT_EXIST(260404, "The url does not exist"),
   /** Order */
-  ORDER_CONFIRM_PRICE_FAIL(280002, "Create Order - Failed to confirm the price"),
-  ORDER_CONFIRM_REPEAT(280008, "Duplicate Submission for order"),
-  ORDER_CONFIRM_TOKEN_EQUAL_FAIL(280009, "Invalid order token"),
+  ORDER_CREATE_PRICE_FAIL(280002, "Create Order - Failed to confirm the price"),
+  ORDER_CREATE_REPEAT(280008, "Duplicate Submission for order or the order does not exist"),
+  ORDER_CREATE_TOKEN_EQUAL_FAIL(280009, "Invalid order token"),
   ORDER_CONFIRM_NOT_EXIST(280010, "The order does not exist"),
   /** Payment */
   PAY_ORDER_FAIL(300001, "Failed to create order"),
