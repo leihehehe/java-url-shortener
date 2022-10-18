@@ -13,4 +13,5 @@ public enum EventMessageType {
     SHORT_LINK_UPDATE,
     SHORT_LINK_UPDATE_LINK,
     SHORT_LINK_UPDATE_MAPPING,
+    PRODUCT_ORDER_NEW
 }

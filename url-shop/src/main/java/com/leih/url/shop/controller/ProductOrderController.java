@@ -75,7 +75,7 @@ public class ProductOrderController {
    */
   @PostMapping("create_order")
 //  @PreventRepeatSubmission(limitType = PreventRepeatSubmission.Type.TOKEN)
-  public JsonData createOrder(
+  public void createOrder(
       @RequestBody CreateOrderRequest createOrderRequest, HttpServletResponse response) {
     JsonData jsonData = productOrderService.createOrder(createOrderRequest);
     if (jsonData.getCode() == 0) {
@@ -86,7 +86,9 @@ public class ProductOrderController {
         // TODO
         if (clientType.equalsIgnoreCase(ClientTypeEnum.PC.name())) {
           // TODO
-          CommonUtil.sendHtmlMessage(response,jsonData);
+          CommonUtil.sendJsonMessage(response, jsonData);
+
+//          CommonUtil.sendHtmlMessage(response,jsonData);
         } else if (clientType.equalsIgnoreCase(ClientTypeEnum.APP.name())) {
           // TODO
         } else if (clientType.equalsIgnoreCase(ClientTypeEnum.H5.name())) {
@@ -99,6 +101,5 @@ public class ProductOrderController {
       log.error("Failed to create order: {}", jsonData);
       CommonUtil.sendJsonMessage(response, jsonData);
     }
-    return JsonData.buildSuccess();
   }
 }
