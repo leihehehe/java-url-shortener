@@ -23,7 +23,7 @@ public class ProductOrderListener {
     public void productOrderHandler(EventMessage eventMessage, Message message, Channel channel){
         log.info("Detected messages from ProductOrderListener: {}",message);
         try{
-            //TODO
+            productOrderService.cancelProductOrder(eventMessage);
         }
         catch (Exception e){
             log.error("Failed to consume the message: {}",eventMessage);
