@@ -33,7 +33,7 @@ public class ProductOrderManagerImpl implements ProductOrderManager {
     }
 
     @Override
-    public ProductOrder findByOrderNoAndAccountNo(Long orderNo, Long accountNo) {
+    public ProductOrder findByOrderNoAndAccountNo(String orderNo, Long accountNo) {
         return productOrderRepository.findByOrderNoAndAccountNoAndDel(orderNo,accountNo,0);
     }
 

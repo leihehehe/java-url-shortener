@@ -158,6 +158,15 @@ public class CommonUtil {
       log.warn("Send exception json data to frontend " + e);
     }
   }
+  public static void sendHtmlMessage(HttpServletResponse response, JsonData jsonData) {
+    response.setContentType("text/html;charset=utf-8");
+    try (PrintWriter writer = response.getWriter()) {
+      writer.write(jsonData.getData().toString());
+      writer.flush();
+    } catch (IOException e) {
+      log.warn("Send exception json data to frontend " + e);
+    }
+  }
   /**
    * Murmur hash
    * @param param
