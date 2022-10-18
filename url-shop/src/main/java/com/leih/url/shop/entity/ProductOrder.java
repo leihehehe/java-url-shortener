@@ -1,11 +1,17 @@
 package com.leih.url.shop.entity;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.sql.Timestamp;
 
 @Data
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 @Entity
 @Table(name = "product_order",uniqueConstraints = {
         @UniqueConstraint(name = "uk_query",columnNames = {"order_no","account_no"})
