@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.sql.Timestamp;
+import java.util.Date;
 
 @Data
 @Builder
@@ -36,7 +37,7 @@ public class ProductOrder {
   @Column(name = "state",length = 11)
   private String state;
   @Column(name = "create_time")
-  private Timestamp createTime;
+  private Date createTime;
   @Column(name = "total_price")
   private Double totalPrice;
   @Column(name = "pay_price")

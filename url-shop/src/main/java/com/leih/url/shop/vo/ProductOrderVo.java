@@ -4,6 +4,7 @@ import lombok.Data;
 
 import javax.persistence.*;
 import java.sql.Timestamp;
+import java.util.Date;
 
 @Data
 public class ProductOrderVo {
@@ -15,7 +16,7 @@ public class ProductOrderVo {
   private Integer buyNum;
   private String orderNo;
   private String state;
-  private Timestamp createTime;
+  private Date createTime;
   private Double totalPrice;
   private Double payPrice;
   private String paymentType;
