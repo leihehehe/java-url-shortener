@@ -1,16 +1,15 @@
 package com.leih.url.shop.service.impl;
 
 import com.leih.url.common.constant.TimeConstant;
-import com.leih.url.common.enums.BillTypeEnum;
-import com.leih.url.common.enums.BizCodeEnum;
-import com.leih.url.common.enums.OrderStateEnum;
-import com.leih.url.common.enums.PaymentTypeEnum;
+import com.leih.url.common.enums.*;
 import com.leih.url.common.exception.BizException;
 import com.leih.url.common.intercepter.LoginInterceptor;
+import com.leih.url.common.model.EventMessage;
 import com.leih.url.common.model.LoggedInUser;
 import com.leih.url.common.util.CommonUtil;
 import com.leih.url.common.util.JsonData;
 import com.leih.url.common.util.JsonUtil;
+import com.leih.url.shop.config.RabbitMQConfig;
 import com.leih.url.shop.controller.request.CreateOrderRequest;
 import com.leih.url.shop.controller.request.ProductOrderPageRequest;
 import com.leih.url.shop.entity.Product;
@@ -20,6 +19,7 @@ import com.leih.url.shop.manager.ProductOrderManager;
 import com.leih.url.shop.service.ProductOrderService;
 import com.leih.url.shop.vo.PaymentInfo;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -30,7 +30,10 @@ import java.util.Map;
 public class ProductOrderServiceImpl implements ProductOrderService {
   @Autowired private ProductOrderManager productOrderManager;
   @Autowired private ProductManager productManager;
-
+  @Autowired
+  private RabbitTemplate rabbitTemplate;
+  @Autowired
+  private RabbitMQConfig rabbitMQConfig;
   @Override
   public Map<String, Object> paginateProductOrder(ProductOrderPageRequest request) {
     Long accountNo = LoginInterceptor.threadLocal.get().getAccountNo();
@@ -55,7 +58,7 @@ public class ProductOrderServiceImpl implements ProductOrderService {
     LoggedInUser loggedInUser = LoginInterceptor.threadLocal.get();
     String orderNo = CommonUtil.getStringNumRandom(32);
     Product product = productManager.getProductDetail(createOrderRequest.getProductId());
-    if(checkPrice(product,createOrderRequest)){
+    if(!checkPrice(product,createOrderRequest)){
       log.error("Inconsistent price:{}",createOrderRequest);
       throw new BizException(BizCodeEnum.ORDER_CREATE_PRICE_FAIL);
     }
@@ -69,8 +72,12 @@ public class ProductOrderServiceImpl implements ProductOrderService {
             .description("")
             .payPrice(createOrderRequest.getPayPrice())
             .orderPaymentTimeoutMills(TimeConstant.ORDER_PAYMENT_TIMEOUT_MILLS).build();
-
-    return null;
+    EventMessage eventMessage = EventMessage.builder().eventMessageType(EventMessageType.PRODUCT_ORDER_NEW.name())
+            .accountNo(loggedInUser.getAccountNo())
+            .bizId(orderNo)
+            .build();
+    rabbitTemplate.convertAndSend(rabbitMQConfig.getOrderEventExchange(),rabbitMQConfig.getOrderCloseDelayRoutingKey(),eventMessage);
+    return JsonData.buildSuccess();
   }
 
   private ProductOrder createProductOrder(CreateOrderRequest createOrderRequest, LoggedInUser loggedInUser, String orderNo, Product product) {
