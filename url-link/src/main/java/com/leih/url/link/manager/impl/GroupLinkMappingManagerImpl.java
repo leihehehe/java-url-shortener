@@ -66,12 +66,12 @@ public class GroupLinkMappingManagerImpl implements GroupLinkMappingManager {
     pageInfo.put(
         "current_data",
         shortLinksPage.getContent().stream()
-            .map(this::convertObjectToVo)
+            .map(this::convertGroupLinkMappingToVo)
             .collect(Collectors.toList()));
     return pageInfo;
   }
 
-  private GroupLinkMappingVo convertObjectToVo(GroupLinkMapping groupLinkMapping) {
+  private GroupLinkMappingVo convertGroupLinkMappingToVo(GroupLinkMapping groupLinkMapping) {
     GroupLinkMappingVo groupLinkMappingVo = new GroupLinkMappingVo();
     BeanUtils.copyProperties(groupLinkMapping, groupLinkMappingVo);
     return groupLinkMappingVo;
