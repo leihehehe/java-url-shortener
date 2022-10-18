@@ -17,11 +17,12 @@ import com.leih.url.shop.entity.ProductOrder;
 import com.leih.url.shop.manager.ProductManager;
 import com.leih.url.shop.manager.ProductOrderManager;
 import com.leih.url.shop.service.ProductOrderService;
-import com.leih.url.shop.vo.PaymentInfo;
+import com.leih.url.shop.vo.PaymentInfoVo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import java.util.Date;
 import java.util.Map;
@@ -65,7 +66,7 @@ public class ProductOrderServiceImpl implements ProductOrderService {
     //create order
     ProductOrder productOrder =createProductOrder(createOrderRequest,loggedInUser,orderNo,product);
     //create payment info
-    PaymentInfo paymentInfo = PaymentInfo.builder().accountNo(loggedInUser.getAccountNo())
+    PaymentInfoVo paymentInfoVo = PaymentInfoVo.builder().accountNo(loggedInUser.getAccountNo())
             .orderNo(orderNo)
             .clientType(createOrderRequest.getClientType())
             .productName(product.getName())
@@ -78,6 +79,43 @@ public class ProductOrderServiceImpl implements ProductOrderService {
             .build();
     rabbitTemplate.convertAndSend(rabbitMQConfig.getOrderEventExchange(),rabbitMQConfig.getOrderCloseDelayRoutingKey(),eventMessage);
     return JsonData.buildSuccess();
+  }
+
+  @Override
+  public boolean cancelProductOrder(EventMessage eventMessage) {
+    String orderNo = eventMessage.getBizId();
+    Long accountNo = eventMessage.getAccountNo();
+    ProductOrder productOrder = productOrderManager.findByOrderNoAndAccountNo(orderNo, accountNo);
+    if(productOrder==null){
+      log.warn("Order does not exist");
+      return true;
+    }
+    if(productOrder.getState().equalsIgnoreCase(OrderStateEnum.PAID.name())){
+      log.info("Order has already been paid");
+      return true;
+    }
+    if(productOrder.getState().equalsIgnoreCase(OrderStateEnum.NEW.name())){
+      PaymentInfoVo paymentInfoVo = PaymentInfoVo.builder()
+              .paymentType(productOrder.getPaymentType())
+              .accountNo(accountNo)
+              .orderNo(orderNo).build();
+      //check order from third-party platform
+      String result="";
+      if(!StringUtils.hasLength(result)){
+        //order hasn't been paid
+        productOrderManager.updateOrderPaymentState(orderNo,accountNo,OrderStateEnum.CANCELED.name(),OrderStateEnum.NEW.name());
+        log.info("Order has been successfully canceled");
+      }else{
+        //order has been paid
+        productOrderManager.updateOrderPaymentState(orderNo,accountNo,OrderStateEnum.PAID.name(),OrderStateEnum.NEW.name());
+        log.info("Order has already been paid but it seems that we failed to update the state, try to resolve this problem: {}",eventMessage);
+        //TODO
+      }
+      return true;
+    }
+    //canceled
+    log.info("Order has been canceled");
+    return true;
   }
 
   private ProductOrder createProductOrder(CreateOrderRequest createOrderRequest, LoggedInUser loggedInUser, String orderNo, Product product) {

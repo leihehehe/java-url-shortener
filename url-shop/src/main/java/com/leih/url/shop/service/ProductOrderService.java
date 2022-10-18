@@ -1,5 +1,6 @@
 package com.leih.url.shop.service;
 
+import com.leih.url.common.model.EventMessage;
 import com.leih.url.common.util.JsonData;
 import com.leih.url.shop.controller.request.CreateOrderRequest;
 import com.leih.url.shop.controller.request.ProductOrderPageRequest;
@@ -12,4 +13,7 @@ public interface ProductOrderService {
     String queryProductOrderState(String orderNo);
 
     JsonData createOrder(CreateOrderRequest createOrderRequest);
+
+    boolean cancelProductOrder(EventMessage eventMessage);
+
 }
