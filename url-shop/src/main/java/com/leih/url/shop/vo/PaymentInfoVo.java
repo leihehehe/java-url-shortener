@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class PaymentInfo {
+public class PaymentInfoVo {
     /**
      * Order Number
      */
