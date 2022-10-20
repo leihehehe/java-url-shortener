@@ -15,7 +15,8 @@ import org.springframework.stereotype.Component;
 
 @Component
 @Slf4j
-@RabbitListener(queuesToDeclare = {@Queue("order.close.queue")})
+@RabbitListener(queuesToDeclare = {@Queue("order.close.queue")
+,@Queue("order.update.queue")})
 public class ProductOrderListener {
     @Autowired
     private ProductOrderService productOrderService;
@@ -23,7 +24,7 @@ public class ProductOrderListener {
     public void productOrderHandler(EventMessage eventMessage, Message message, Channel channel){
         log.info("Detected messages from ProductOrderListener: {}",message);
         try{
-            productOrderService.cancelProductOrder(eventMessage);
+            productOrderService.handleProductOrderMsg(eventMessage);
         }
         catch (Exception e){
             log.error("Failed to consume the message: {}",eventMessage);
@@ -31,4 +32,5 @@ public class ProductOrderListener {
         }
         log.info("Successfully consumed the message");
     }
+
 }
