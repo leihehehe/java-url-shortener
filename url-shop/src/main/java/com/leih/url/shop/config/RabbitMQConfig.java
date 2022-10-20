@@ -72,4 +72,41 @@ public class RabbitMQConfig {
     public Binding orderCloseBinding(){
         return new Binding(orderCloseQueue, Binding.DestinationType.QUEUE,orderEventExchange,orderCloseRoutingKey,null);
     }
+
+    /***
+     * Update order status
+     */
+    private String orderUpdateQueue="order.update.queue";
+    /**
+     * Update account's plans
+     */
+    private String orderPlanQueue = "order.plan.queue";
+    /**
+     * this will be used after successful payment
+     */
+    private String orderUpdatePlanRoutingKey = "order.update.plan.routing.key";
+    private String orderUpdateBindingKey = "order.update.*.routing.key";
+    private String orderPlanBindingKey = "order.*.plan.routing.key";
+
+    @Bean
+    public Queue orderUpdateQueue(){
+        return new Queue(orderUpdateQueue,true,false,false);
+    }
+
+    /**
+     * Dead letter queue
+     * @return
+     */
+    @Bean
+    public Queue orderPlanQueue(){
+        return new Queue(orderPlanQueue,true,false,false);
+    }
+    @Bean
+    public Binding orderUpdateBinding(){
+        return new Binding(orderUpdateQueue, Binding.DestinationType.QUEUE,orderEventExchange,orderUpdatePlanRoutingKey,null);
+    }
+    @Bean
+    public Binding orderPlanBinding(){
+        return new Binding(orderUpdateQueue, Binding.DestinationType.QUEUE,orderEventExchange,orderUpdatePlanRoutingKey,null);
+    }
 }
