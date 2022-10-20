@@ -74,32 +74,19 @@ public class ProductOrderController {
    * @return
    */
   @PostMapping("create_order")
-//  @PreventRepeatSubmission(limitType = PreventRepeatSubmission.Type.TOKEN)
-  public void createOrder(
+  @PreventRepeatSubmission(limitType = PreventRepeatSubmission.Type.TOKEN)
+  public JsonData createOrder(
       @RequestBody CreateOrderRequest createOrderRequest, HttpServletResponse response) {
-    JsonData jsonData = productOrderService.createOrder(createOrderRequest);
-    if (jsonData.getCode() == 0) {
-      String clientType = createOrderRequest.getClientType();
-      String paymentType = createOrderRequest.getPaymentType();
-      // PAYPAL
-      if (paymentType.equalsIgnoreCase(PaymentTypeEnum.PAYPAL.name())) {
-        // TODO
-        if (clientType.equalsIgnoreCase(ClientTypeEnum.PC.name())) {
-          // TODO
-          CommonUtil.sendJsonMessage(response, jsonData);
+    return productOrderService.createOrder(createOrderRequest);
+  }
 
-//          CommonUtil.sendHtmlMessage(response,jsonData);
-        } else if (clientType.equalsIgnoreCase(ClientTypeEnum.APP.name())) {
-          // TODO
-        } else if (clientType.equalsIgnoreCase(ClientTypeEnum.H5.name())) {
-          // TODO
-        }
-      } else if (paymentType.equalsIgnoreCase(PaymentTypeEnum.WECHAT.name())) {
-        CommonUtil.sendJsonMessage(response, jsonData);
-      }
-    } else {
-      log.error("Failed to create order: {}", jsonData);
-      CommonUtil.sendJsonMessage(response, jsonData);
-    }
+  /**
+   * This method should be implemented by third-party platform(like PayPal).
+   * @param orderNo
+   * @return
+   */
+  @GetMapping("/pay_order/{orderNo}")
+  public JsonData payOrder(@PathVariable("orderNo") String orderNo){
+    return productOrderService.payOrder(orderNo);
   }
 }

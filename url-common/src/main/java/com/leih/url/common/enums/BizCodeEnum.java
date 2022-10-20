@@ -32,6 +32,8 @@ public enum BizCodeEnum {
   ORDER_CREATE_REPEAT(280008, "Duplicate Submission for order or the order does not exist"),
   ORDER_CREATE_TOKEN_EQUAL_FAIL(280009, "Invalid order token"),
   ORDER_CONFIRM_NOT_EXIST(280010, "The order does not exist"),
+  ORDER_ALREADY_CANCELLED(280011, "The order has already been canceled"),
+  ORDER_ALREADY_PAID(280012, "The order has already been paid"),
   /** Payment */
   PAY_ORDER_FAIL(300001, "Failed to create order"),
   PAY_ORDER_CALLBACK_SIGN_FAIL(300002, "Invalid sign"),
