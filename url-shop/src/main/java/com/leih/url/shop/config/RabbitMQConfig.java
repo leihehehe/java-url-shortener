@@ -107,6 +107,6 @@ public class RabbitMQConfig {
     }
     @Bean
     public Binding orderPlanBinding(){
-        return new Binding(orderUpdateQueue, Binding.DestinationType.QUEUE,orderEventExchange,orderUpdatePlanRoutingKey,null);
+        return new Binding(orderPlanQueue, Binding.DestinationType.QUEUE,orderEventExchange,orderUpdatePlanRoutingKey,null);
     }
 }
