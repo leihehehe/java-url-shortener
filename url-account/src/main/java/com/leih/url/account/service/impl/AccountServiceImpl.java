@@ -1,5 +1,6 @@
 package com.leih.url.account.service.impl;
 
+import com.leih.url.account.config.RabbitMQConfig;
 import com.leih.url.account.controller.request.AccountLoginRequest;
 import com.leih.url.account.controller.request.AccountRegisterRequest;
 import com.leih.url.account.entity.Account;
@@ -9,7 +10,9 @@ import com.leih.url.account.service.NotificationService;
 import com.leih.url.common.constant.RedisKey;
 import com.leih.url.common.enums.AuthTypeEnum;
 import com.leih.url.common.enums.BizCodeEnum;
+import com.leih.url.common.enums.EventMessageType;
 import com.leih.url.common.enums.SendCodeEnum;
+import com.leih.url.common.model.EventMessage;
 import com.leih.url.common.model.LoggedInUser;
 import com.leih.url.common.util.CommonUtil;
 import com.leih.url.common.util.IdUtil;
@@ -17,9 +20,12 @@ import com.leih.url.common.util.JWTUtil;
 import com.leih.url.common.util.JsonData;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.codec.digest.Md5Crypt;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
 @Slf4j
@@ -36,6 +42,7 @@ public class AccountServiceImpl implements AccountService {
      * @return
      */
     @Override
+    @Transactional(rollbackFor = Exception.class,propagation = Propagation.REQUIRED)
     public JsonData register(AccountRegisterRequest registerRequest) {
         //check if code is correct
         boolean checkCode=false;
@@ -56,12 +63,28 @@ public class AccountServiceImpl implements AccountService {
         try{
             accountManager.insertAccount(account);
             log.info("Register success: {}",account);
+            //assign free plans
+            userRegisterInitFree(account);
             return JsonData.buildSuccess();
         }catch (Exception e){
             log.info("Register failed: {}",e.getMessage());
             return JsonData.buildResult(BizCodeEnum.ACCOUNT_REPEAT);
         }
 
+    }
+
+    private static final Long FREE_INIT_PRODUCT_ID=1L;
+    @Autowired
+    private RabbitTemplate rabbitTemplate;
+    @Autowired
+    private RabbitMQConfig rabbitMQConfig;
+    public void userRegisterInitFree(Account account){
+        EventMessage eventMessage = EventMessage.builder().messageId(IdUtil.generateSnowFlakeId().toString())
+                .accountNo(account.getAccountNo())
+                .eventMessageType(EventMessageType.PLAN_FREE_NEW_ACCOUNT.name())
+                .bizId(FREE_INIT_PRODUCT_ID.toString())
+                .build();
+        rabbitTemplate.convertAndSend(rabbitMQConfig.getPlanEventExchange(),rabbitMQConfig.getPlanFreeInitRoutingKey(),eventMessage);
     }
 
     /***
