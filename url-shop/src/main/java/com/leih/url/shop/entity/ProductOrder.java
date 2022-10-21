@@ -30,14 +30,14 @@ public class ProductOrder {
   private Double productPrice;
   @Column(name = "product_snapshot",length = 2048)
   private String productSnapshot;
-  @Column(name = "by_num")
+  @Column(name = "buy_num")
   private Integer buyNum;
   @Column(name = "order_no",length = 64)
   private String orderNo;
   @Column(name = "state",length = 11)
   private String state;
   @Column(name = "create_time")
-  private Date createTime;
+  private Timestamp createTime;
   @Column(name = "total_price")
   private Double totalPrice;
   @Column(name = "pay_price")
