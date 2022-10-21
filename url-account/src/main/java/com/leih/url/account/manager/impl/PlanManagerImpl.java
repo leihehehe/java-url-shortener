@@ -5,16 +5,20 @@ import com.leih.url.account.entity.Plan;
 import com.leih.url.account.manager.PlanManager;
 import com.leih.url.common.util.TimeUtil;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.Map;
 @Component
 @Slf4j
 public class PlanManagerImpl implements PlanManager {
+    @Autowired
     private PlanRepository planRepository;
     @Override
     public boolean addPlan(Plan plan) {
@@ -31,8 +35,10 @@ public class PlanManagerImpl implements PlanManager {
     @Override
     public Page<Plan> paginateAvailablePlan(int page, int size, Long accountNo) {
         PageRequest pageRequest = PageRequest.of(page, size);
-        String today = TimeUtil.format(new Date(), "yyyy-MM-dd");
-        Page<Plan> availablePlans = planRepository.findAvailablePlans(accountNo, today,pageRequest);
+//        String today = TimeUtil.format(new Date(), "yyyy-MM-dd HH:mm:ss");
+        LocalDateTime now = LocalDateTime.now();
+        Timestamp currentTime = Timestamp.valueOf(now);
+        Page<Plan> availablePlans = planRepository.findAvailablePlans(accountNo, currentTime,pageRequest);
 
         return availablePlans;
     }
