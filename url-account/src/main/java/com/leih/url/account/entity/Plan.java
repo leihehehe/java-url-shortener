@@ -1,15 +1,18 @@
 package com.leih.url.account.entity;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
-
-import javax.naming.Name;
+import lombok.NoArgsConstructor;
 import javax.persistence.*;
 import java.sql.Timestamp;
+import java.util.Date;
 
 @Data
 @Entity
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 @Table(
         name = "plan",
         uniqueConstraints = {
@@ -17,27 +20,29 @@ import java.sql.Timestamp;
         },
         indexes = {@Index(name = "idx_account_no",columnList = "account_no")}
 )
-public class Plan {
+public class  Plan {
   @Id
   @Column(name = "id")
   @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private long id;
+  private Long id;
   @Column(name = "day_limit")
-  private int dayLimit;
+  private Integer dayLimit;
   @Column(name="day_used")
-  private int dayUsed;
+  private Integer dayUsed;
+  @Column(name="total_limit")
+  private Integer totalLimit;
   @Column(name = "account_no")
-  private long accountNo;
+  private Long accountNo;
   @Column(name = "order_no",length = 64)
   private String orderNo;
   @Column(name = "level",length = 64)
   private String level;
   @Column(name = "expired_date")
-  private java.sql.Date expiredDate;
+  private Timestamp expiredDate;
   @Column(name = "plugin_type",length = 64)
   private String pluginType;
   @Column(name="product_id")
-  private long productId;
+  private Long productId;
   @Column(name = "gmt_create",insertable = false, updatable = false, columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
   private Timestamp gmtCreate;
   @Column(

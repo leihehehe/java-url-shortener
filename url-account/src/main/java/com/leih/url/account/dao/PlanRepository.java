@@ -11,10 +11,12 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.sql.Timestamp;
+
 @Repository
 public interface PlanRepository extends JpaRepository<Plan,Long> {
-    @Query("select p from Plan p where p.accountNo=:accountNo and p.expiredDate<:date order by p.gmtCreate desc")
-    Page<Plan> findAvailablePlans(@Param("accountNo") Long accountNo, @Param("date") String date, Pageable pageable);
+    @Query("select p from Plan p where p.accountNo=:accountNo and p.expiredDate>:date order by p.gmtCreate desc")
+    Page<Plan> findAvailablePlans(@Param("accountNo") Long accountNo, @Param("date") Timestamp date, Pageable pageable);
     Plan findPlanByAccountNoAndId(Long accountNo, Long planId);
 
     @Transactional

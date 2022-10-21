@@ -25,6 +25,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
+import java.sql.Timestamp;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -237,7 +238,7 @@ public class ProductOrderServiceImpl implements ProductOrderService {
             // order
             .buyNum(createOrderRequest.getBuyNum())
             .orderNo(orderNo)
-            .createTime(new Date())
+            .createTime(new Timestamp(new Date().getTime()))
             .del(0)
             // price
             .totalPrice(createOrderRequest.getTotalPrice())
