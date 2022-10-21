@@ -75,6 +75,6 @@ public class JsonData {
    * @throws IOException
    */
   public <T> T getData(TypeReference<T> typeReference) throws IOException {
-    return objectMapper.readValue((JsonParser) data, typeReference);
+    return objectMapper.readValue(JsonUtil.obj2Json(data), typeReference);
   }
 }
