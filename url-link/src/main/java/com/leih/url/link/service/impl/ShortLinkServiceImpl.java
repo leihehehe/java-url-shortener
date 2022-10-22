@@ -1,7 +1,7 @@
 package com.leih.url.link.service.impl;
 
 import com.leih.url.common.enums.DomainTypeEnum;
-import com.leih.url.common.enums.EventMessageType;
+import com.leih.url.common.enums.EventMessageTypeEnum;
 import com.leih.url.common.enums.ShortLinkStateEnum;
 import com.leih.url.common.intercepter.LoginInterceptor;
 import com.leih.url.common.model.EventMessage;
@@ -74,7 +74,7 @@ public class ShortLinkServiceImpl implements ShortLinkService {
             .accountNo(accountNo)
             .content(JsonUtil.obj2Json(request))
             .messageId(IdUtil.generateSnowFlakeId().toString())
-            .eventMessageType(EventMessageType.SHORT_LINK_ADD.name())
+            .eventMessageType(EventMessageTypeEnum.SHORT_LINK_ADD.name())
             .build();
     rabbitTemplate.convertAndSend(
         rabbitMQConfig.getShortLinkEventExchange(),
@@ -120,7 +120,7 @@ public class ShortLinkServiceImpl implements ShortLinkService {
     boolean success = true;
     if (result > 0) {
       // successfully add a lock
-      if (EventMessageType.SHORT_LINK_ADD_LINK.name().equalsIgnoreCase(eventMessageType)) {
+      if (EventMessageTypeEnum.SHORT_LINK_ADD_LINK.name().equalsIgnoreCase(eventMessageType)) {
         Link shortLinkInDB = shortLinkManager.findShortLinkByCode(shortLinkCode);
         if (shortLinkInDB == null) {
           // short link code is not used in the database
@@ -142,7 +142,7 @@ public class ShortLinkServiceImpl implements ShortLinkService {
           log.error("Short link exists in the link tables:{}", eventMessage);
           success = false;
         }
-      } else if (EventMessageType.SHORT_LINK_ADD_MAPPING
+      } else if (EventMessageTypeEnum.SHORT_LINK_ADD_MAPPING
           .name()
           .equalsIgnoreCase(eventMessageType)) {
         GroupLinkMapping groupLinkMappingInDB =
@@ -200,7 +200,7 @@ public class ShortLinkServiceImpl implements ShortLinkService {
     ShortLinkUpdateRequest request =
         JsonUtil.json2Obj(eventMessage.getContent(), ShortLinkUpdateRequest.class);
     Domain domain = checkDomain(request.getDomainType(), request.getDomainId(), accountNo);
-    if (EventMessageType.SHORT_LINK_UPDATE_LINK.name().equalsIgnoreCase(eventMessageType)) {
+    if (EventMessageTypeEnum.SHORT_LINK_UPDATE_LINK.name().equalsIgnoreCase(eventMessageType)) {
       Link updatedLink =
           Link.builder()
               .code(request.getCode())
@@ -210,7 +210,7 @@ public class ShortLinkServiceImpl implements ShortLinkService {
               .build();
       log.info("Updating short link for short_link table");
       return shortLinkManager.updateShortLink(updatedLink);
-    } else if (EventMessageType.SHORT_LINK_UPDATE_MAPPING
+    } else if (EventMessageTypeEnum.SHORT_LINK_UPDATE_MAPPING
         .name()
         .equalsIgnoreCase(eventMessageType)) {
       GroupLinkMapping updatedLinkMapping =
@@ -233,10 +233,10 @@ public class ShortLinkServiceImpl implements ShortLinkService {
     String eventMessageType = eventMessage.getEventMessageType();
     ShortLinkDeleteRequest request =
         JsonUtil.json2Obj(eventMessage.getContent(), ShortLinkDeleteRequest.class);
-    if (EventMessageType.SHORT_LINK_DELETE_LINK.name().equalsIgnoreCase(eventMessageType)) {
+    if (EventMessageTypeEnum.SHORT_LINK_DELETE_LINK.name().equalsIgnoreCase(eventMessageType)) {
       Link shortLink = Link.builder().code(request.getCode()).accountNo(accountNo).build();
       return shortLinkManager.deleteShortLink(shortLink);
-    } else if (EventMessageType.SHORT_LINK_DELETE_MAPPING.name().equalsIgnoreCase(eventMessageType)) {
+    } else if (EventMessageTypeEnum.SHORT_LINK_DELETE_MAPPING.name().equalsIgnoreCase(eventMessageType)) {
       GroupLinkMapping groupLinkMapping =
           GroupLinkMapping.builder()
               .groupId(request.getGroupId())
@@ -271,7 +271,7 @@ public class ShortLinkServiceImpl implements ShortLinkService {
             .accountNo(accountNo)
             .content(JsonUtil.obj2Json(request))
             .messageId(IdUtil.generateSnowFlakeId().toString())
-            .eventMessageType(EventMessageType.SHORT_LINK_DELETE.name())
+            .eventMessageType(EventMessageTypeEnum.SHORT_LINK_DELETE.name())
             .build();
     rabbitTemplate.convertAndSend(
         rabbitMQConfig.getShortLinkEventExchange(),
@@ -288,7 +288,7 @@ public class ShortLinkServiceImpl implements ShortLinkService {
             .accountNo(accountNo)
             .content(JsonUtil.obj2Json(request))
             .messageId(IdUtil.generateSnowFlakeId().toString())
-            .eventMessageType(EventMessageType.SHORT_LINK_UPDATE.name())
+            .eventMessageType(EventMessageTypeEnum.SHORT_LINK_UPDATE.name())
             .build();
     rabbitTemplate.convertAndSend(
         rabbitMQConfig.getShortLinkEventExchange(),

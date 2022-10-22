@@ -1,6 +1,6 @@
 package com.leih.url.common.enums;
 
-public enum EventMessageType {
+public enum EventMessageTypeEnum {
     /**
      * shorten url -> create short link
      */

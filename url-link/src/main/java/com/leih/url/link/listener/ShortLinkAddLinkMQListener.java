@@ -1,10 +1,9 @@
 package com.leih.url.link.listener;
 
 import com.leih.url.common.enums.BizCodeEnum;
-import com.leih.url.common.enums.EventMessageType;
+import com.leih.url.common.enums.EventMessageTypeEnum;
 import com.leih.url.common.exception.BizException;
 import com.leih.url.common.model.EventMessage;
-import com.leih.url.link.config.RabbitMQConfig;
 import com.leih.url.link.service.ShortLinkService;
 import com.rabbitmq.client.Channel;
 import lombok.extern.slf4j.Slf4j;
@@ -27,7 +26,7 @@ public class ShortLinkAddLinkMQListener {
     public void shortLinkHandler(EventMessage eventMessage, Message message, Channel channel) throws IOException {
         log.info("Message received by ShortLinkAddLinkMQListener: {}",message);
         try{
-            eventMessage.setEventMessageType(EventMessageType.SHORT_LINK_ADD_LINK.name());
+            eventMessage.setEventMessageType(EventMessageTypeEnum.SHORT_LINK_ADD_LINK.name());
             shortLinkService.handleAddShortLink(eventMessage);
         }catch (Exception e){
             log.error("Failed to handle message: {}",eventMessage);
