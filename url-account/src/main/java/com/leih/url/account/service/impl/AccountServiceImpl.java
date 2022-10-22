@@ -7,10 +7,9 @@ import com.leih.url.account.entity.Account;
 import com.leih.url.account.manager.AccountManager;
 import com.leih.url.account.service.AccountService;
 import com.leih.url.account.service.NotificationService;
-import com.leih.url.common.constant.RedisKey;
 import com.leih.url.common.enums.AuthTypeEnum;
 import com.leih.url.common.enums.BizCodeEnum;
-import com.leih.url.common.enums.EventMessageType;
+import com.leih.url.common.enums.EventMessageTypeEnum;
 import com.leih.url.common.enums.SendCodeEnum;
 import com.leih.url.common.model.EventMessage;
 import com.leih.url.common.model.LoggedInUser;
@@ -81,7 +80,7 @@ public class AccountServiceImpl implements AccountService {
     public void userRegisterInitFree(Account account){
         EventMessage eventMessage = EventMessage.builder().messageId(IdUtil.generateSnowFlakeId().toString())
                 .accountNo(account.getAccountNo())
-                .eventMessageType(EventMessageType.PLAN_FREE_NEW_ACCOUNT.name())
+                .eventMessageType(EventMessageTypeEnum.PLAN_FREE_NEW_ACCOUNT.name())
                 .bizId(FREE_INIT_PRODUCT_ID.toString())
                 .build();
         rabbitTemplate.convertAndSend(rabbitMQConfig.getPlanEventExchange(),rabbitMQConfig.getPlanFreeInitRoutingKey(),eventMessage);

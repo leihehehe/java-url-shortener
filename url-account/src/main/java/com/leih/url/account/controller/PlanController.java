@@ -32,7 +32,7 @@ public class PlanController {
     @PostMapping("use")
     public JsonData usePlan(@RequestBody UsePlanRequest request, HttpServletResponse response){
         //TODO
-
-        return JsonData.buildSuccess();
+        JsonData jsonData =planService.usePlan(request);
+        return jsonData;
     }
 }

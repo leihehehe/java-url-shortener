@@ -1,7 +1,7 @@
 package com.leih.url.link.listener;
 
 import com.leih.url.common.enums.BizCodeEnum;
-import com.leih.url.common.enums.EventMessageType;
+import com.leih.url.common.enums.EventMessageTypeEnum;
 import com.leih.url.common.exception.BizException;
 import com.leih.url.common.model.EventMessage;
 import com.leih.url.link.service.ShortLinkService;
@@ -26,7 +26,7 @@ public class ShortLinkUpdateLinkMQListener {
     public void shortLinkHandler(EventMessage eventMessage, Message message, Channel channel) throws IOException {
         log.info("Message received by ShortLinkUpdateLinkMQListener: {}",message);
         try{
-            eventMessage.setEventMessageType(EventMessageType.SHORT_LINK_UPDATE_LINK.name());
+            eventMessage.setEventMessageType(EventMessageTypeEnum.SHORT_LINK_UPDATE_LINK.name());
             shortLinkService.handleUpdateShortLink(eventMessage);
         }catch (Exception e){
             log.error("Failed to handle message: {}",eventMessage);
