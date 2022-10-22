@@ -12,15 +12,35 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.Timestamp;
+import java.util.List;
 
 @Repository
 public interface PlanRepository extends JpaRepository<Plan,Long> {
     @Query("select p from Plan p where p.accountNo=:accountNo and p.expiredDate>:date order by p.gmtCreate desc")
-    Page<Plan> findAvailablePlans(@Param("accountNo") Long accountNo, @Param("date") Timestamp date, Pageable pageable);
+    Page<Plan> paginateAvailablePlans(@Param("accountNo") Long accountNo, @Param("date") Timestamp date, Pageable pageable);
     Plan findPlanByAccountNoAndId(Long accountNo, Long planId);
 
     @Transactional
     @Modifying
     @Query("update Plan set dayUsed=:dayUsedTimes where id=:planId and accountNo=:accountNo")
-    int updateDayUsedTimes(@Param("planId") Long planId, @Param("accountNo") Long accountNo,@Param("dayUsedTimes") int dayUsedTimes);
+    int updateDayUsedTimes(@Param("planId") Long planId, @Param("accountNo") Long accountNo,@Param("dayUsedTimes") Integer dayUsedTimes);
+
+    @Query("select p from Plan p where p.accountNo=:accountNo and p.pluginType=:pluginType and (p.expiredDate>:date or p.orderNo='free_init') order by p.gmtCreate desc")
+    List<Plan> findAvailablePlans(@Param("accountNo") Long accountNo, @Param("pluginType") String pluginType, @Param("date") Timestamp date);
+
+    @Transactional
+    @Modifying
+    @Query("update Plan set dayUsed=dayUsed+:dayUsedTimes where id=:planId and accountNo=:accountNo and dayLimit-dayUsed>=:dayUsedTimes")
+    int addDayUsedTimes(@Param("planId") Long planId, @Param("accountNo") Long accountNo,@Param("dayUsedTimes") Integer dayUsedTimes);
+
+    @Transactional
+    @Modifying
+    @Query("update Plan set dayUsed=dayUsed-:dayUsedTimes where id=:planId and accountNo=:accountNo and dayUsed-:dayUsedTimes>=0")
+    int restoreDayUsedTimes(@Param("planId") Long planId, @Param("accountNo") Long accountNo,@Param("dayUsedTimes") Integer dayUsedTimes);
+
+    @Transactional
+    @Modifying
+    @Query("delete from Plan where expiredDate<:currentDatetime and (orderNo not like 'free_init')")
+    int deleteExpiredPlans(@Param("currentDatetime") Timestamp currentDatetime);
+
 }

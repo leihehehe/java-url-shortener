@@ -46,10 +46,10 @@ public enum BizCodeEnum {
   CONTROL_DEGRADE(500201, "Circuit break"),
   CONTROL_AUTH(500301, "Authentication control"),
   /** 􁁞􁰁􀛱􀶙􀖢 */
-  TRAFFIC_FREE_NOT_EXIST(600101, "We currently don't offer free data, please contact us."),
-  TRAFFIC_REDUCE_FAIL(600102, "Insufficient data, failed to deduct data"),
+  PLAN_FREE_NOT_EXIST(600101, "We currently don't offer free data, please contact us."),
+  PLAN_REDUCE_FAIL(600102, "Insufficient data, failed to deduct data"),
 
-  TRAFFIC_EXCEPTION(600103, "Abnormal data, user does not have data"),
+  PLAN_EXCEPTION(600103, "Abnormal data, user does not have data"),
 
   /** General Code */
   OPS_REPEAT(110001, "Duplicate operation"),

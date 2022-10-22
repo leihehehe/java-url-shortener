@@ -5,6 +5,7 @@ import com.leih.url.account.dao.AccountRepository;
 import com.leih.url.account.dao.PlanRepository;
 import com.leih.url.account.entity.Account;
 import com.leih.url.account.entity.Plan;
+import com.leih.url.account.manager.PlanManager;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -14,7 +15,9 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Random;
 
 @RunWith(SpringRunner.class)
@@ -44,4 +47,34 @@ public class PlanTest {
         log.info("{}",date);
 
     }
+@Autowired
+    private PlanManager planManager;
+    @Test
+    public void testFindAvailablePlans(){
+        List<Plan> availablePlans = planManager.findAvailablePlans(790528839817101312L);
+        availablePlans.forEach(obj->{
+            log.info(obj.toString());
+        });
+    }
+    @Test
+    public void testAddDayUsedTimes(){
+       planManager.addDayUsedTimes(790686270075080704L,790528839817101312L,1);
+    }
+    @Test
+    public void testRestoreDayUsedTimes(){
+        planManager.restoreUsedTimes(790686270075080704L,790528839817101312L,1);
+    }
+
+    @Test
+    public void testBatchUpdateDayUsedTimes(){
+        ArrayList<Long> arr = new ArrayList<>();
+        arr.add(790686270075080704L);
+        arr.add(790528840154386433L);
+        planManager.batchUpdateUsedTimesToZero(790528839817101312L,arr);
+    }
+    @Test
+    public void deleteExpiredDate(){
+        planManager.deleteExpiredPlans();
+    }
+
 }
