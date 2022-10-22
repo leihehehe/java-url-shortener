@@ -82,7 +82,7 @@ public class ProductOrderServiceImpl implements ProductOrderService {
     //    .orderPaymentTimeoutMills(TimeConstant.ORDER_PAYMENT_TIMEOUT_MILLS).build();
     EventMessage eventMessage =
         EventMessage.builder()
-            .eventMessageType(EventMessageType.PRODUCT_ORDER_NEW.name())
+            .eventMessageType(EventMessageTypeEnum.PRODUCT_ORDER_NEW.name())
             .accountNo(loggedInUser.getAccountNo())
             .bizId(orderNo)
             .build();
@@ -181,7 +181,7 @@ public class ProductOrderServiceImpl implements ProductOrderService {
             .bizId(orderNo)
             .messageId(orderNo)
             .content(JsonUtil.obj2Json(content))
-            .eventMessageType(EventMessageType.PRODUCT_ORDER_PAID.name()).build();
+            .eventMessageType(EventMessageTypeEnum.PRODUCT_ORDER_PAID.name()).build();
     if(paymentType.equals(PaymentTypeEnum.PAYPAL)){
       if("SUCCESS".equalsIgnoreCase(tradingStatus)){
         //use redis to make sure callback is only invoked once(some payment platform will send messages multiple times)
@@ -202,10 +202,10 @@ public class ProductOrderServiceImpl implements ProductOrderService {
   public void handleProductOrderMsg(EventMessage eventMessage) {
     String eventMessageType = eventMessage.getEventMessageType();
     try{
-      if (eventMessageType.equalsIgnoreCase(EventMessageType.PRODUCT_ORDER_NEW.name())){
+      if (eventMessageType.equalsIgnoreCase(EventMessageTypeEnum.PRODUCT_ORDER_NEW.name())){
         //cancel the order
         this.cancelProductOrder(eventMessage);
-      } else if (eventMessageType.equalsIgnoreCase(EventMessageType.PRODUCT_ORDER_PAID.name())) {
+      } else if (eventMessageType.equalsIgnoreCase(EventMessageTypeEnum.PRODUCT_ORDER_PAID.name())) {
         //update the order status
         String orderNo = eventMessage.getBizId();
         Long accountNo = eventMessage.getAccountNo();
