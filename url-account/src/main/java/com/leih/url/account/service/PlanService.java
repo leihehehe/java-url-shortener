@@ -16,5 +16,5 @@ public interface PlanService {
     PlanVo getPlanDetail(Long planId);
 
     JsonData usePlan(UsePlanRequest request);
-
+    boolean deleteExpiredPlans();
 }

@@ -156,6 +156,11 @@ public class PlanServiceImpl implements PlanService {
     return JsonData.buildSuccess();
   }
 
+  @Override
+  public boolean deleteExpiredPlans() {
+    return planManager.deleteExpiredPlans();
+  }
+
   /**
    * Process plan list
    * @param accountNo
