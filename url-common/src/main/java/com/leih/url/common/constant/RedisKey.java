@@ -12,4 +12,13 @@ public class RedisKey {
    * order:submit:{accountNo}:{token}
    */
   public static final String SUBMIT_ORDER_TOKEN_KEY="order:submit:%s:%s";
+  /**
+   *
+   */
+  public static final String PLAN_DELETE_EXPIRED_SCHEDULER_KEY="plan:scheduler:delete:paid_expired";
+  /**
+   * order:callback:{orderNo}
+   */
+  public static final String ORDER_CALLBACK_KEY="order:callback:%s";
+
 }
