@@ -11,14 +11,12 @@ import com.leih.url.common.util.JsonData;
 import com.leih.url.common.util.JsonUtil;
 import com.leih.url.link.component.ShortLinkComponent;
 import com.leih.url.link.config.RabbitMQConfig;
-import com.leih.url.link.controller.request.ShortLinkAddRequest;
-import com.leih.url.link.controller.request.ShortLinkDeleteRequest;
-import com.leih.url.link.controller.request.ShortLinkPageRequest;
-import com.leih.url.link.controller.request.ShortLinkUpdateRequest;
+import com.leih.url.link.controller.request.*;
 import com.leih.url.link.entity.Domain;
 import com.leih.url.link.entity.GroupLinkMapping;
 import com.leih.url.link.entity.Link;
 import com.leih.url.link.entity.LinkGroup;
+import com.leih.url.link.fiegn.PlanFeignService;
 import com.leih.url.link.manager.DomainManager;
 import com.leih.url.link.manager.GroupLinkMappingManager;
 import com.leih.url.link.manager.LinkGroupManager;
@@ -50,6 +48,7 @@ public class ShortLinkServiceImpl implements ShortLinkService {
   @Autowired private GroupLinkMappingManager groupLinkMappingManager;
   @Autowired private ShortLinkComponent shortLinkComponent;
   @Autowired private RedisTemplate<Object, Object> redisTemplate;
+  @Autowired private PlanFeignService planFeignService;
 
   @Override
   public LinkVo parseShortLinkCode(String shortLinkCode) {
@@ -124,20 +123,29 @@ public class ShortLinkServiceImpl implements ShortLinkService {
         Link shortLinkInDB = shortLinkManager.findShortLinkByCode(shortLinkCode);
         if (shortLinkInDB == null) {
           // short link code is not used in the database
-          Link shortLink =
-              Link.builder()
-                  .accountNo(accountNo)
-                  .code(shortLinkCode)
-                  .name(shortLinkAddRequest.getName())
-                  .originalUrl(shortLinkAddRequest.getOriginalUrl())
-                  .domain(domain.getValue())
-                  .groupId(linkGroup.getId())
-                  .expired(shortLinkAddRequest.getExpired())
-                  .sign(originalUrlDigest)
-                  .state(ShortLinkStateEnum.ACTIVATED.name())
-                  .del(0)
-                  .build();
-          return shortLinkManager.addShortLink(shortLink);
+          // check if the user has enough number of times a short link can be created
+          boolean useFlag = usePlan(eventMessage, shortLinkCode);
+          if (useFlag) {
+            Link shortLink =
+                Link.builder()
+                    .accountNo(accountNo)
+                    .code(shortLinkCode)
+                    .name(shortLinkAddRequest.getName())
+                    .originalUrl(shortLinkAddRequest.getOriginalUrl())
+                    .domain(domain.getValue())
+                    .groupId(linkGroup.getId())
+                    .expired(shortLinkAddRequest.getExpired())
+                    .sign(originalUrlDigest)
+                    .state(ShortLinkStateEnum.ACTIVATED.name())
+                    .del(0)
+                    .build();
+            return shortLinkManager.addShortLink(shortLink);
+          } else {
+            log.error(
+                "Failed to use plan - Insufficient number of times a short link can be crated");
+            success = false;
+          }
+
         } else {
           log.error("Short link exists in the link tables:{}", eventMessage);
           success = false;
@@ -148,7 +156,7 @@ public class ShortLinkServiceImpl implements ShortLinkService {
         GroupLinkMapping groupLinkMappingInDB =
             groupLinkMappingManager.findShortLinkByCode(
                 shortLinkCode, linkGroup.getId(), accountNo);
-        //check if group link mapping exists
+        // check if group link mapping exists
         if (groupLinkMappingInDB == null) {
           GroupLinkMapping groupLinkMapping =
               GroupLinkMapping.builder()
@@ -186,6 +194,27 @@ public class ShortLinkServiceImpl implements ShortLinkService {
       handleAddShortLink(eventMessage);
     }
     return false;
+  }
+
+  /**
+   * Deduct plan
+   *
+   * @param eventMessage
+   * @param shortLinkCode
+   * @return
+   */
+  private boolean usePlan(EventMessage eventMessage, String shortLinkCode) {
+    UsePlanRequest request =
+        UsePlanRequest.builder()
+            .accountNo(eventMessage.getAccountNo())
+            .bizId(shortLinkCode)
+            .build();
+    JsonData result = planFeignService.usePlan(request);
+    if (result.getCode() != 0) {
+      log.error("Failed to deduct the plan, insufficient amount");
+      return false;
+    }
+    return true;
   }
 
   /**
@@ -236,7 +265,9 @@ public class ShortLinkServiceImpl implements ShortLinkService {
     if (EventMessageTypeEnum.SHORT_LINK_DELETE_LINK.name().equalsIgnoreCase(eventMessageType)) {
       Link shortLink = Link.builder().code(request.getCode()).accountNo(accountNo).build();
       return shortLinkManager.deleteShortLink(shortLink);
-    } else if (EventMessageTypeEnum.SHORT_LINK_DELETE_MAPPING.name().equalsIgnoreCase(eventMessageType)) {
+    } else if (EventMessageTypeEnum.SHORT_LINK_DELETE_MAPPING
+        .name()
+        .equalsIgnoreCase(eventMessageType)) {
       GroupLinkMapping groupLinkMapping =
           GroupLinkMapping.builder()
               .groupId(request.getGroupId())
