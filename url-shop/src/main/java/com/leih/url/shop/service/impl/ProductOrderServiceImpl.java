@@ -1,5 +1,6 @@
 package com.leih.url.shop.service.impl;
 
+import com.leih.url.common.constant.RedisKey;
 import com.leih.url.common.enums.*;
 import com.leih.url.common.exception.BizException;
 import com.leih.url.common.intercepter.LoginInterceptor;
@@ -185,7 +186,7 @@ public class ProductOrderServiceImpl implements ProductOrderService {
     if(paymentType.equals(PaymentTypeEnum.PAYPAL)){
       if("SUCCESS".equalsIgnoreCase(tradingStatus)){
         //use redis to make sure callback is only invoked once(some payment platform will send messages multiple times)
-        Boolean ok = redisTemplate.opsForValue().setIfAbsent(orderNo, "ok", 3, TimeUnit.DAYS);
+        Boolean ok = redisTemplate.opsForValue().setIfAbsent(String.format(RedisKey.ORDER_CALLBACK_KEY,orderNo), "ok", 2, TimeUnit.DAYS);
         if(Boolean.TRUE.equals(ok)){
           //send messages
           rabbitTemplate.convertAndSend(rabbitMQConfig.getOrderEventExchange(),rabbitMQConfig.getOrderUpdatePlanRoutingKey(),eventMessage);
