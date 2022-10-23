@@ -7,8 +7,10 @@ import com.leih.url.account.vo.PlanVo;
 import com.leih.url.common.util.JsonData;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Map;
 
@@ -18,7 +20,8 @@ import java.util.Map;
 public class PlanController {
     @Autowired
     private PlanService planService;
-
+    @Value("${rpc.token}")
+    private String rpcToken;
     @PostMapping("page")
     public JsonData paginateAvailablePlans(@RequestBody PlanPageRequest request){
         Map<String,Object> map = planService.paginateAvailablePlans(request);
@@ -30,9 +33,13 @@ public class PlanController {
         return JsonData.buildSuccess(plan);
     }
     @PostMapping("use")
-    public JsonData usePlan(@RequestBody UsePlanRequest request, HttpServletResponse response){
-        //TODO
-        JsonData jsonData =planService.usePlan(request);
-        return jsonData;
+    public JsonData usePlan(@RequestBody UsePlanRequest usePlanRequest, HttpServletRequest request){
+        String rpcRequestToken = request.getHeader("rpc-token");
+        if(rpcToken.equalsIgnoreCase(rpcRequestToken)){
+            JsonData jsonData =planService.usePlan(usePlanRequest);
+            return jsonData;
+        }else {
+            return JsonData.buildError("Forbidden");
+        }
     }
 }

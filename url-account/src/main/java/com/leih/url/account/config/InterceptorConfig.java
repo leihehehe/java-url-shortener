@@ -13,6 +13,6 @@ public class InterceptorConfig implements WebMvcConfigurer {
                 //add paths to be intercepted
                 .addPathPatterns("/api/account/*/**","/api/plan/*/**")
                 .excludePathPatterns("/api/account/*/register","/api/account/*/login","/api/account/*/upload",
-                        "/api/notification/*/captcha","/api/notification/*/send_code");
+                        "/api/notification/*/captcha","/api/notification/*/send_code","/api/plan/*/use");
     }
 }
