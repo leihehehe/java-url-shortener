@@ -21,4 +21,15 @@ public class RedisKey {
    */
   public static final String ORDER_CALLBACK_KEY="order:callback:%s";
 
+  /**
+   * Available plans per day
+   * plan:total_available_times:{accountNo}
+   */
+  public static final String PLAN_TOTAL_AVAILABLE_TIMES="plan:total_available_times:%s";
+
+  /***
+   * Short link code
+   * short_link:code:{short link code}
+   */
+  public static final String SHORT_LINK_CODE_KEY="short_link:code:%s";
 }

@@ -1,5 +1,7 @@
 package com.leih.url.link.service.impl;
 
+import com.leih.url.common.constant.RedisKey;
+import com.leih.url.common.enums.BizCodeEnum;
 import com.leih.url.common.enums.DomainTypeEnum;
 import com.leih.url.common.enums.EventMessageTypeEnum;
 import com.leih.url.common.enums.ShortLinkStateEnum;
@@ -16,7 +18,7 @@ import com.leih.url.link.entity.Domain;
 import com.leih.url.link.entity.GroupLinkMapping;
 import com.leih.url.link.entity.Link;
 import com.leih.url.link.entity.LinkGroup;
-import com.leih.url.link.fiegn.PlanFeignService;
+import com.leih.url.link.feign.PlanFeignService;
 import com.leih.url.link.manager.DomainManager;
 import com.leih.url.link.manager.GroupLinkMappingManager;
 import com.leih.url.link.manager.LinkGroupManager;
@@ -25,6 +27,7 @@ import com.leih.url.link.service.ShortLinkService;
 import com.leih.url.link.vo.LinkVo;
 import io.jsonwebtoken.lang.Assert;
 import lombok.extern.slf4j.Slf4j;
+import org.assertj.core.util.Arrays;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -65,21 +68,31 @@ public class ShortLinkServiceImpl implements ShortLinkService {
   @Override
   public JsonData createShortLink(ShortLinkAddRequest request) {
     Long accountNo = LoginInterceptor.threadLocal.get().getAccountNo();
-    // avoid url conflicts
-    String newOriginalUrl = CommonUtil.addUrlPrefix(request.getOriginalUrl());
-    request.setOriginalUrl(newOriginalUrl);
-    EventMessage eventMessage =
-        EventMessage.builder()
-            .accountNo(accountNo)
-            .content(JsonUtil.obj2Json(request))
-            .messageId(IdUtil.generateSnowFlakeId().toString())
-            .eventMessageType(EventMessageTypeEnum.SHORT_LINK_ADD.name())
-            .build();
-    rabbitTemplate.convertAndSend(
-        rabbitMQConfig.getShortLinkEventExchange(),
-        rabbitMQConfig.getShortLinkAddRoutingKey(),
-        eventMessage);
-    return JsonData.buildSuccess();
+    //check the plan cache
+    String key = String.format(RedisKey.PLAN_TOTAL_AVAILABLE_TIMES, accountNo);
+    String script = "if redis.call('get',KEYS[1]) then return redis.call('decr',KEYS[1]) else return 0 end";
+    Long leftTimes = redisTemplate.execute(new DefaultRedisScript<>(script, Long.class), List.of(key));
+    log.info("Available times:{}",leftTimes);
+    if(leftTimes>=0){
+      // avoid url conflicts
+      String newOriginalUrl = CommonUtil.addUrlPrefix(request.getOriginalUrl());
+      request.setOriginalUrl(newOriginalUrl);
+      EventMessage eventMessage =
+              EventMessage.builder()
+                      .accountNo(accountNo)
+                      .content(JsonUtil.obj2Json(request))
+                      .messageId(IdUtil.generateSnowFlakeId().toString())
+                      .eventMessageType(EventMessageTypeEnum.SHORT_LINK_ADD.name())
+                      .build();
+      rabbitTemplate.convertAndSend(
+              rabbitMQConfig.getShortLinkEventExchange(),
+              rabbitMQConfig.getShortLinkAddRoutingKey(),
+              eventMessage);
+      return JsonData.buildSuccess();
+    }else{
+      return  JsonData.buildResult(BizCodeEnum.PLAN_REDUCE_FAIL);
+    }
+
   }
 
   /**
@@ -113,9 +126,10 @@ public class ShortLinkServiceImpl implements ShortLinkService {
             // if it does exist, and the accountNo is the same, return 2
             + " elseif redis.call('get',KEYS[1]) == ARGV[1] then return 2;"
             + " else return 0; end;";
+    String shortLinkCodeKey = String.format(RedisKey.SHORT_LINK_CODE_KEY, shortLinkCode);
     Long result =
         redisTemplate.execute(
-            new DefaultRedisScript<>(script, Long.class), List.of(shortLinkCode), accountNo, 100);
+            new DefaultRedisScript<>(script, Long.class), List.of(shortLinkCodeKey), accountNo, 100);
     boolean success = true;
     if (result > 0) {
       // successfully add a lock
