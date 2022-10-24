@@ -30,4 +30,5 @@ public interface ShortLinkService {
     boolean handleUpdateShortLink(EventMessage eventMessage);
     boolean handleDeleteShortLink(EventMessage eventMessage);
 
+    boolean deleteShortLinkMappingByCode(EventMessage eventMessage);
 }

@@ -28,6 +28,7 @@ import com.leih.url.link.vo.LinkVo;
 import io.jsonwebtoken.lang.Assert;
 import lombok.extern.slf4j.Slf4j;
 import org.assertj.core.util.Arrays;
+import org.redisson.api.RedissonClient;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -68,33 +69,33 @@ public class ShortLinkServiceImpl implements ShortLinkService {
   @Override
   public JsonData createShortLink(ShortLinkAddRequest request) {
     Long accountNo = LoginInterceptor.threadLocal.get().getAccountNo();
-    //check the plan cache
+    // check the plan cache
     String key = String.format(RedisKey.PLAN_TOTAL_AVAILABLE_TIMES, accountNo);
-    String script = "if redis.call('get',KEYS[1]) then return redis.call('decr',KEYS[1]) else return 0 end";
-    Long leftTimes = redisTemplate.execute(new DefaultRedisScript<>(script, Long.class), List.of(key));
-    log.info("Available times:{}",leftTimes);
-    if(leftTimes>=0){
+    String script =
+        "if redis.call('get',KEYS[1]) then return redis.call('decr',KEYS[1]) else return 0 end";
+    Long leftTimes =
+        redisTemplate.execute(new DefaultRedisScript<>(script, Long.class), List.of(key));
+    log.info("Available times:{}", leftTimes);
+    if (leftTimes >= 0) {
       // avoid url conflicts
       String newOriginalUrl = CommonUtil.addUrlPrefix(request.getOriginalUrl());
       request.setOriginalUrl(newOriginalUrl);
       EventMessage eventMessage =
-              EventMessage.builder()
-                      .accountNo(accountNo)
-                      .content(JsonUtil.obj2Json(request))
-                      .messageId(IdUtil.generateSnowFlakeId().toString())
-                      .eventMessageType(EventMessageTypeEnum.SHORT_LINK_ADD.name())
-                      .build();
+          EventMessage.builder()
+              .accountNo(accountNo)
+              .content(JsonUtil.obj2Json(request))
+              .messageId(IdUtil.generateSnowFlakeId().toString())
+              .eventMessageType(EventMessageTypeEnum.SHORT_LINK_ADD.name())
+              .build();
       rabbitTemplate.convertAndSend(
-              rabbitMQConfig.getShortLinkEventExchange(),
-              rabbitMQConfig.getShortLinkAddRoutingKey(),
-              eventMessage);
+          rabbitMQConfig.getShortLinkEventExchange(),
+          rabbitMQConfig.getShortLinkAddRoutingKey(),
+          eventMessage);
       return JsonData.buildSuccess();
-    }else{
-      return  JsonData.buildResult(BizCodeEnum.PLAN_REDUCE_FAIL);
+    } else {
+      return JsonData.buildResult(BizCodeEnum.PLAN_REDUCE_FAIL);
     }
-
   }
-
   /**
    * Add short link in terms of event message type Add short link to link/mapping tables
    *
@@ -129,7 +130,10 @@ public class ShortLinkServiceImpl implements ShortLinkService {
     String shortLinkCodeKey = String.format(RedisKey.SHORT_LINK_CODE_KEY, shortLinkCode);
     Long result =
         redisTemplate.execute(
-            new DefaultRedisScript<>(script, Long.class), List.of(shortLinkCodeKey), accountNo, 100);
+            new DefaultRedisScript<>(script, Long.class),
+            List.of(shortLinkCodeKey),
+            accountNo,
+            100);
     boolean success = true;
     if (result > 0) {
       // successfully add a lock
@@ -138,8 +142,9 @@ public class ShortLinkServiceImpl implements ShortLinkService {
         if (shortLinkInDB == null) {
           // short link code is not used in the database
           // check if the user has enough number of times a short link can be created
-          boolean useFlag = usePlan(eventMessage, shortLinkCode);
-          if (useFlag) {
+
+          if (usePlan(eventMessage, shortLinkCode)) {
+            // another listener has already checked this operation is valid
             Link shortLink =
                 Link.builder()
                     .accountNo(accountNo)
@@ -156,8 +161,22 @@ public class ShortLinkServiceImpl implements ShortLinkService {
             return shortLinkManager.addShortLink(shortLink);
           } else {
             log.error(
-                "Failed to use plan - Insufficient number of times a short link can be crated");
-            success = false;
+                "Failed to use plan - Insufficient number of times a short link can be created - ShortLink");
+            //empty the key to make next query available
+            String totalAvailableTimesKey = String.format(RedisKey.PLAN_TOTAL_AVAILABLE_TIMES,
+                    eventMessage.getAccountNo());
+            redisTemplate.delete(totalAvailableTimesKey);
+            //send a message to delete group mapping
+            ShortLinkDeleteRequest shortLinkDeleteRequest = new ShortLinkDeleteRequest();
+            shortLinkDeleteRequest.setCode(shortLinkCode);
+            shortLinkDeleteRequest.setGroupId(linkGroup.getId());
+            EventMessage checkMessage = EventMessage.builder().eventMessageType(EventMessageTypeEnum.LINK_CHECK_IF_CREATED.name())
+                    .accountNo(accountNo)
+                    .bizId(shortLinkCode)
+                    .content(JsonUtil.obj2Json(shortLinkDeleteRequest))
+                    .build();
+            rabbitTemplate.convertAndSend(rabbitMQConfig.getShortLinkEventExchange(),rabbitMQConfig.getShortLinkCheckDelayRoutingKey(),checkMessage);
+            return false;
           }
 
         } else {
@@ -172,20 +191,23 @@ public class ShortLinkServiceImpl implements ShortLinkService {
                 shortLinkCode, linkGroup.getId(), accountNo);
         // check if group link mapping exists
         if (groupLinkMappingInDB == null) {
-          GroupLinkMapping groupLinkMapping =
-              GroupLinkMapping.builder()
-                  .accountNo(accountNo)
-                  .code(shortLinkCode)
-                  .name(shortLinkAddRequest.getName())
-                  .originalUrl(shortLinkAddRequest.getOriginalUrl())
-                  .domain(domain.getValue())
-                  .groupId(linkGroup.getId())
-                  .expired(shortLinkAddRequest.getExpired())
-                  .sign(originalUrlDigest)
-                  .state(ShortLinkStateEnum.ACTIVATED.name())
-                  .del(0)
-                  .build();
-          return groupLinkMappingManager.addShortLink(groupLinkMapping);
+          // check if the user has enough number of times a short link can be created
+            // another listener has already checked this operation is valid
+            GroupLinkMapping groupLinkMapping =
+                GroupLinkMapping.builder()
+                    .accountNo(accountNo)
+                    .code(shortLinkCode)
+                    .name(shortLinkAddRequest.getName())
+                    .originalUrl(shortLinkAddRequest.getOriginalUrl())
+                    .domain(domain.getValue())
+                    .groupId(linkGroup.getId())
+                    .expired(shortLinkAddRequest.getExpired())
+                    .sign(originalUrlDigest)
+                    .state(ShortLinkStateEnum.ACTIVATED.name())
+                    .del(0)
+                    .build();
+            return groupLinkMappingManager.addShortLink(groupLinkMapping);
+
         } else {
           log.error("Group link mapping exists in the mapping tables:{}", eventMessage);
           success = false;
@@ -225,6 +247,9 @@ public class ShortLinkServiceImpl implements ShortLinkService {
             .build();
     JsonData result = planFeignService.usePlan(request);
     if (result.getCode() != 0) {
+      //      String totalAvailableTimesKey = String.format(RedisKey.PLAN_TOTAL_AVAILABLE_TIMES,
+      // eventMessage.getAccountNo());
+      //      redisTemplate.delete(totalAvailableTimesKey);
       log.error("Failed to deduct the plan, insufficient amount");
       return false;
     }
@@ -291,6 +316,16 @@ public class ShortLinkServiceImpl implements ShortLinkService {
       return groupLinkMappingManager.deleteShortLink(groupLinkMapping);
     }
     return false;
+  }
+
+  @Override
+  public boolean deleteShortLinkMappingByCode(EventMessage eventMessage) {
+    ShortLinkDeleteRequest request =
+            JsonUtil.json2Obj(eventMessage.getContent(), ShortLinkDeleteRequest.class);
+    GroupLinkMapping groupLinkMapping = GroupLinkMapping.builder().groupId(request.getGroupId())
+            .code(request.getCode())
+            .accountNo(eventMessage.getAccountNo()).build();
+    return groupLinkMappingManager.fullyDeleteShortLinkByCode(groupLinkMapping);
   }
 
   /**

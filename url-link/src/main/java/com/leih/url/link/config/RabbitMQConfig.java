@@ -8,6 +8,8 @@ import org.springframework.amqp.core.TopicExchange;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import java.util.HashMap;
+
 @Configuration
 @Data
 public class RabbitMQConfig {
@@ -33,6 +35,12 @@ public class RabbitMQConfig {
   private String shortLinkUpdateRoutingKey = "short_link.update.link.mapping.routing.key";
   private String shortLinkUpdateLinkBindingKey = "short_link.update.link.*.routing.key";
   private String shortLinkUpdateMappingBindingKey = "short_link.update.*.mapping.routing.key";
+
+  //first queue
+  private String shortLinkCheckDelayQueue = "short_link.check.delay.queue";
+  private String shortLinkCheckQueue = "short_link.check.queue";
+  private String shortLinkCheckDelayRoutingKey = "short_link.check.delay.routing.key";
+  private String shortLinkCheckRoutingKey = "short_link.check.routing.key";
 
   /**
    * Usually one service one switch
@@ -144,4 +152,33 @@ public class RabbitMQConfig {
   public Queue shortLinkUpdateMappingQueue() {
     return new Queue(shortLinkUpdateMappingQueue, true, false, false);
   }
+
+  private Integer ttl = 20000; //20 seconds
+  /**
+   * Dead letter queue
+   * @return
+   */
+  @Bean
+  public Queue shortLinkCheckDelayQueue(){
+    HashMap<String, Object> args = new HashMap<>(3);
+    args.put("x-message-ttl",ttl);
+    args.put("x-dead-letter-exchange",shortLinkEventExchange);
+    args.put("x-dead-letter-routing-key", shortLinkCheckRoutingKey);
+    return new Queue(shortLinkCheckDelayQueue,true,false,false,args);
+  }
+
+  @Bean
+  public Queue shortLinkCheckQueue(){
+    return new Queue(shortLinkCheckQueue,true,false,false);
+  }
+  @Bean
+  public Binding shortLinkCheckDelayBinding(){
+    return new Binding(shortLinkCheckDelayQueue, Binding.DestinationType.QUEUE,shortLinkEventExchange,shortLinkCheckDelayRoutingKey,null);
+  }
+
+  @Bean
+  public Binding shortCheckBinding(){
+    return new Binding(shortLinkCheckQueue, Binding.DestinationType.QUEUE,shortLinkEventExchange,shortLinkCheckRoutingKey,null);
+  }
+
 }
