@@ -60,10 +60,10 @@ public class PlanTest {
     public void testAddDayUsedTimes(){
        planManager.addDayUsedTimes(790686270075080704L,790528839817101312L,1);
     }
-    @Test
-    public void testRestoreDayUsedTimes(){
-        planManager.restoreUsedTimes(790686270075080704L,790528839817101312L,1);
-    }
+//    @Test
+//    public void testRestoreDayUsedTimes(){
+//        planManager.restoreUsedTimes(790686270075080704L,790528839817101312L,1);
+//    }
 
     @Test
     public void testBatchUpdateDayUsedTimes(){

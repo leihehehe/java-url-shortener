@@ -12,7 +12,7 @@ public interface PlanManager {
     Plan findByIdAndAccountNo(Long planId, Long accountNo);
     List<Plan> findAvailablePlans(Long accountNo);
     boolean addDayUsedTimes(Long planId, Long accountNo, Integer usedTimes);
-    boolean restoreUsedTimes(Long planId, Long accountNo, Integer usedTimes);
+    boolean restoreUsedTimes(Long planId, Long accountNo, Integer usedTimes,String taskCreateDate);
     boolean batchUpdateUsedTimesToZero(Long accountNo, List<Long> planIds);
     boolean deleteExpiredPlans();
 }

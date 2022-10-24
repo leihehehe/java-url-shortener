@@ -35,8 +35,8 @@ public interface PlanRepository extends JpaRepository<Plan,Long> {
 
     @Transactional
     @Modifying
-    @Query("update Plan set dayUsed=dayUsed-:dayUsedTimes where id=:planId and accountNo=:accountNo and dayUsed-:dayUsedTimes>=0")
-    int restoreDayUsedTimes(@Param("planId") Long planId, @Param("accountNo") Long accountNo,@Param("dayUsedTimes") Integer dayUsedTimes);
+    @Query("update Plan set dayUsed=dayUsed-:dayUsedTimes where id=:planId and accountNo=:accountNo and dayUsed-:dayUsedTimes>=0 and function('date_format',gmtModified,'%Y-%m-%d')=:taskCreateDate")
+    int restoreDayUsedTimes(@Param("planId") Long planId, @Param("accountNo") Long accountNo,@Param("dayUsedTimes") Integer dayUsedTimes,@Param("taskCreateDate") String taskCreateDate);
 
     @Transactional
     @Modifying
