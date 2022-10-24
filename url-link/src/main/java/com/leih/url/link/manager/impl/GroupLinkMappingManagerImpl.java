@@ -112,4 +112,15 @@ public class GroupLinkMappingManagerImpl implements GroupLinkMappingManager {
     return groupLinkMappingRepository.findByCodeAndAccountNoAndGroupIdAndDel(
         shortLinkCode, accountNo, groupId, 0);
   }
+
+  @Override
+  public boolean fullyDeleteShortLinkByCode(GroupLinkMapping groupLinkMapping) {
+    try{
+      groupLinkMappingRepository.deleteGroupLinkMappingByShortLinkCode(groupLinkMapping.getCode(), groupLinkMapping.getAccountNo(), groupLinkMapping.getGroupId());
+      return true;
+    }catch (Exception e){
+      log.error("Failed to delete short link mapping by code:{}",e.getMessage());
+      return false;
+    }
+  }
 }
