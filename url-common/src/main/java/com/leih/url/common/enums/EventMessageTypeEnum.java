@@ -16,5 +16,5 @@ public enum EventMessageTypeEnum {
     PRODUCT_ORDER_NEW,
     PRODUCT_ORDER_PAID,
     PLAN_FREE_NEW_ACCOUNT,
-
+    LINK_CHECK_IF_CREATED,
 }

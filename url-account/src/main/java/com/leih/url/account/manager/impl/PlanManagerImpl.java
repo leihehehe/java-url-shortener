@@ -71,9 +71,9 @@ public class PlanManagerImpl implements PlanManager {
   }
 
   @Override
-  public boolean restoreUsedTimes(Long planId, Long accountNo, Integer usedTimes) {
+  public boolean restoreUsedTimes(Long planId, Long accountNo, Integer usedTimes, String taskCreateDate) {
     try {
-      planRepository.restoreDayUsedTimes(planId, accountNo, usedTimes);
+      planRepository.restoreDayUsedTimes(planId, accountNo, usedTimes,taskCreateDate);
       return true;
     } catch (Exception e) {
       log.error("Failed restore used times: {}", e.getMessage());

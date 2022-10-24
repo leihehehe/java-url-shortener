@@ -14,7 +14,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
-@RabbitListener(queuesToDeclare = {@Queue("order.plan.queue"),@Queue("plan.free_init.queue")})
+@RabbitListener(queuesToDeclare = {@Queue("order.plan.queue"),@Queue("plan.free_init.queue")
+,@Queue("plan.restore.queue")})
 @Slf4j
 public class PlanMQListener {
     @Autowired
