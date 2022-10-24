@@ -1,4 +1,4 @@
-package com.leih.url.link.fiegn;
+package com.leih.url.link.feign;
 
 import com.leih.url.common.util.JsonData;
 import com.leih.url.link.controller.request.UsePlanRequest;
