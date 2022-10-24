@@ -12,7 +12,7 @@ public class PlanJobScheduler {
   @Autowired PlanService planService;
 
   @CacheLock(lockedPrefix = RedisKey.PLAN_DELETE_EXPIRED_SCHEDULER_KEY)
-  @Scheduled(cron = "0 15 10 * * ?")//start at every 10:15
+  @Scheduled(cron = "0 0 0 * * ?")//start at every 00:00
   public void deleteExpiredPaidPlans() {
     planService.deleteExpiredPlans();
   }

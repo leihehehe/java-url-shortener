@@ -59,4 +59,5 @@ public class ShortLinkManagerImpl implements ShortLinkManager {
             return false;
         }
     }
+
 }
