@@ -56,4 +56,5 @@ out/
 .DS_Store
 
 ## sensitive data
+url-account/src/main/resources/application.properties
 /data/
