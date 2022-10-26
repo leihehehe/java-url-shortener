@@ -153,7 +153,7 @@ public class RabbitMQConfig {
     return new Queue(shortLinkUpdateMappingQueue, true, false, false);
   }
 
-  private Integer ttl = 20000; //20 seconds
+  private Integer ttl = 5000; //5 seconds
   /**
    * Dead letter queue
    * @return
