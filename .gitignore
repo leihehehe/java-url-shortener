@@ -57,3 +57,4 @@ out/
 
 ## sensitive data
 url-account/src/main/resources/application.yml
+/data/

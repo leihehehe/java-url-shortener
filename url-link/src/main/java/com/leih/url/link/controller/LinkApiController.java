@@ -2,6 +2,7 @@ package com.leih.url.link.controller;
 
 import com.leih.url.common.enums.ShortLinkStateEnum;
 import com.leih.url.common.util.CommonUtil;
+import com.leih.url.link.service.LogService;
 import com.leih.url.link.service.ShortLinkService;
 import com.leih.url.link.vo.LinkVo;
 import lombok.extern.slf4j.Slf4j;
@@ -26,7 +27,7 @@ public class LinkApiController {
    * @return
    */
   private static boolean isShortLinkCode(String shortLinkCode) {
-    String regx = "~[a-z0-9A-Z]+$";
+    String regx = "^[a-z0-9A-Z]+$";
     return shortLinkCode.matches(regx);
   }
 
@@ -42,26 +43,27 @@ public class LinkApiController {
         return true;
       }
       log.error("The shortened url has been locked.");
-    } else if (shortLink != null && shortLink.getExpired().getTime() == -1) {
-      if (shortLink.getState().equalsIgnoreCase(ShortLinkStateEnum.ACTIVATED.name())) {
-        return true;
-      }
-      log.error("The shortened url has been locked.");
     }
     log.error("The shortened url does not exist or has already expired.");
     return false;
   }
-
+  @Autowired
+LogService logService;
   @GetMapping(path = "/{shortLinkCode}")
   public void dispatch(
       @PathVariable(name = "shortLinkCode") String shortLinkCode,
       HttpServletRequest request,
       HttpServletResponse response) {
-    log.info("Short link code: {}", shortLinkCode);
+
     try {
       // check short link code
+      log.info("Short link code: {}", shortLinkCode);
       if (isShortLinkCode(shortLinkCode)) {
         LinkVo linkVo = shortLinkService.parseShortLinkCode(shortLinkCode);
+        if(linkVo!=null){
+          //record the visited short link code
+          logService.recordShortLinkCode(request, shortLinkCode, linkVo.getAccountNo());
+        }
         if (isShortLinkValid(linkVo)) {
           String newUrl = CommonUtil.removeUrlPrefix(linkVo.getOriginalUrl());
           response.setHeader("Location", newUrl);
