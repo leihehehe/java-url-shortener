@@ -205,4 +205,14 @@ public class CommonUtil {
     String newUrl = newVersion+"|"+originalUrl;
     return newUrl;
   }
+
+  /**
+   * Generate unique Device ID
+   * @param map
+   * @return
+   */
+  public static String generateUniqueDeviceId(Map<String,String> map){
+    String deviceId = MD5(map.toString());
+    return deviceId;
+  }
 }
