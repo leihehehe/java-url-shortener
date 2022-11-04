@@ -23,41 +23,47 @@ import java.net.URL;
 import java.util.Map;
 import java.util.TreeMap;
 
+/** Read data from ODS(Operation Data Store) and write it to DWD(Data Warehouse Detail) */
 @Slf4j
 public class DwdShortLinkLogApp {
   /** Define a source topic */
   public static final String SOURCE_TOPIC = "ods_link_visit_topic";
-  /** Define a group */
+  /** Define a consumer group */
   public static final String GROUP_ID = "dwd_short_link_group";
   /** Define a sink topic */
   public static final String SINK_TOPIC = "dwd_link_visit_topic";
+
   public static void main(String[] args) throws Exception {
     StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
     env.setParallelism(1);
     // get input stream
-    DataStream<String> ds = env.socketTextStream("127.0.0.1", 8088, "\n", 10000);
-    //        FlinkKafkaConsumer<String> kafkaConsumer = KafkaUtil.getKafkaConsumer(SOURCE_TOPIC,
-    // GROUP_ID);
+        DataStream<String> ds = env.socketTextStream("127.0.0.1", 8088, "\n", 10000);
+//    FlinkKafkaConsumer<String> kafkaConsumer = KafkaUtil.getKafkaConsumer(SOURCE_TOPIC, GROUP_ID);
     // use kafka as a source
-    //        DataStreamSource<String> ds = env.addSource(kafkaConsumer);
-    ds.print();
-    //deal with the raw data
-    SingleOutputStreamOperator<ObjectNode> jsonDS = ds.flatMap(new FlatMapFunction<String, ObjectNode>() {
-      @Override
-      public void flatMap(String s, Collector<ObjectNode> collector) throws Exception {
-        ObjectNode jsonNodes = JsonUtil.json2Obj(s, ObjectNode.class);
-        String uid = getDeviceId(jsonNodes);
-        jsonNodes.put("uid", uid);
-        jsonNodes.put("referer", getReferer(jsonNodes));
-        collector.collect(jsonNodes);
-      }
-    });
-    //group by uid
-    KeyedStream<ObjectNode, String> keyedStream = jsonDS.keyBy((KeySelector<ObjectNode, String>) objectNode -> objectNode.get("uid").asText());
-    //identify the visitor is old or new for every grouped stream
-    SingleOutputStreamOperator<String> dsWithVisitorState = keyedStream.map(new VisitorMapFunction());
-    dsWithVisitorState.print("ods_visitors");
-    //store into dwd through kafka
+//    DataStreamSource<String> ds = env.addSource(kafkaConsumer);
+//    ds.print();
+    // deal with the raw data
+    SingleOutputStreamOperator<ObjectNode> jsonDS =
+        ds.flatMap(
+            new FlatMapFunction<String, ObjectNode>() {
+              @Override
+              public void flatMap(String s, Collector<ObjectNode> collector) throws Exception {
+                ObjectNode jsonNodes = JsonUtil.json2Obj(s, ObjectNode.class);
+                String uid = getDeviceId(jsonNodes);
+                jsonNodes.put("uid", uid);
+                jsonNodes.put("referer", getReferer(jsonNodes));
+                collector.collect(jsonNodes);
+              }
+            });
+    // group by uid
+    KeyedStream<ObjectNode, String> keyedStream =
+        jsonDS.keyBy(
+            (KeySelector<ObjectNode, String>) objectNode -> objectNode.get("uid").asText());
+    // identify the visitor is old or new for every grouped stream
+    SingleOutputStreamOperator<String> dsWithVisitorState =
+        keyedStream.map(new VisitorMapFunction());
+    dsWithVisitorState.print("dwd_visitors");
+    // store into dwd through kafka
     FlinkKafkaProducer<String> kafkaProducer = KafkaUtil.getKafkaProducer(SINK_TOPIC);
     dsWithVisitorState.addSink(kafkaProducer);
     env.execute();

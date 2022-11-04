@@ -10,6 +10,8 @@ import org.apache.flink.api.common.state.ValueStateDescriptor;
 import org.apache.flink.configuration.Configuration;
 import org.codehaus.jackson.JsonNode;
 
+import java.time.format.DateTimeFormatter;
+
 @Slf4j
 public class VisitorMapFunction extends RichMapFunction<ObjectNode, String> {
   private ValueState<String> visitorDateState;
@@ -27,8 +29,8 @@ public class VisitorMapFunction extends RichMapFunction<ObjectNode, String> {
     String previousDateState = visitorDateState.value();
     // get current timestamp
     Long timestamp = objectNode.get("timestamp").asLong();
-    String currentDate = TimeUtil.format(timestamp);
-
+    // compare timestamp daily
+    String currentDate = TimeUtil.format(timestamp,DateTimeFormatter.ofPattern("dd-MM-yyyy"));
     if (StringUtils.isNotBlank(previousDateState)
         && previousDateState.equalsIgnoreCase(currentDate)) {
       objectNode.put("isNew", 0);

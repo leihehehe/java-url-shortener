@@ -62,6 +62,17 @@ public class TimeUtil {
         DEFAULT_DATE_TIME_FORMATTER.format(new Date(timestamp).toInstant().atZone(DEFAULT_ZONE_ID));
     return timeStr;
   }
+  /**
+   * Convert timestamp to String(custom format)
+   *
+   * @param timestamp
+   * @return
+   */
+  public static String format(long timestamp,DateTimeFormatter pattern) {
+    String timeStr =
+            pattern.format(new Date(timestamp).toInstant().atZone(DEFAULT_ZONE_ID));
+    return timeStr;
+  }
 
   /**
    * Convert String to timestamp using default format

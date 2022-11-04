@@ -1,12 +1,11 @@
 package com.leih.app.util;
+import com.leih.app.model.DeviceInfo;
+import eu.bitwalker.useragentutils.Browser;
+import eu.bitwalker.useragentutils.OperatingSystem;
+import eu.bitwalker.useragentutils.UserAgent;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.net.InetAddress;
-import java.net.UnknownHostException;
 import java.security.MessageDigest;
 import java.util.*;
 
@@ -32,8 +31,6 @@ public class CommonUtil {
     }
     return null;
   }
-
-
     /**
      * Generate unique Device ID
    * @param map
@@ -42,5 +39,29 @@ public class CommonUtil {
   public static String generateUniqueDeviceId(Map<String,String> map){
     String deviceId = MD5(map.toString());
     return deviceId;
+  }
+
+  public static String getOSVersion(String agent){
+    String osVersion="";
+    if(StringUtils.isNotBlank(agent)){
+      String[] splitArr = agent.substring(agent.indexOf("(") + 1, agent.indexOf(")")).split(";");
+      if(splitArr.length>0){
+        osVersion=splitArr[1];
+      }
+    }
+    return osVersion;
+  }
+
+  public static DeviceInfo getDeviceInfo(String agent){
+    UserAgent userAgent = UserAgent.parseUserAgentString(agent);
+    OperatingSystem os = userAgent.getOperatingSystem();
+    Browser browser = userAgent.getBrowser();
+    DeviceInfo deviceInfo = DeviceInfo.builder().browserName(browser.getGroup().getName())
+            .deviceType(os.getDeviceType().getName())
+            .deviceManufacturer(browser.getManufacturer().getName())
+            .osVersion(getOSVersion(agent))
+            .os(os.getGroup().getName())
+            .build();
+    return deviceInfo;
   }
 }
