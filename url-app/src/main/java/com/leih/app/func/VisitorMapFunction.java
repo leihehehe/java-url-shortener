@@ -12,6 +12,9 @@ import org.codehaus.jackson.JsonNode;
 
 import java.time.format.DateTimeFormatter;
 
+/**
+ * Check if the user has visited without ttl
+ */
 @Slf4j
 public class VisitorMapFunction extends RichMapFunction<ObjectNode, String> {
   private ValueState<String> visitorDateState;
