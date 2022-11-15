@@ -41,6 +41,11 @@ public enum BizCodeEnum {
   PAY_ORDER_NOT_EXIST(300005, "The order does not exist"),
   PAY_ORDER_STATE_ERROR(300006, "Abnormal order detected"),
   PAY_ORDER_PAY_TIMEOUT(300007, "Time out"),
+  /**
+   *
+   */
+  DATA_QUERY_EXCEEDS_LIMIT(400001, "Data query exceeds the limit"),
+  DATE_QUERY_EXCEEDS_LIMIT(400002, "Date query exceeds the limit"),
   /** Flow Control */
   CONTROL_FLOW(500101, "Rate limit"),
   CONTROL_DEGRADE(500201, "Circuit break"),
