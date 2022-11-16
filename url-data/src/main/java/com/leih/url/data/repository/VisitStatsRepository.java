@@ -1,6 +1,7 @@
 package com.leih.url.data.repository;
 
 import com.leih.url.data.entity.VisitStats;
+import com.leih.url.data.vo.VisitStatsVo;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -25,4 +26,14 @@ public interface VisitStatsRepository extends JpaRepository<VisitStats, String> 
       @Param("code") String code,
       @Param("from") int from,
       @Param("size") int size);
+
+  @Query(
+      nativeQuery = true,
+      value =
+          "select country,sum(pv) pv_count,sum(uv) uv_count,count(DISTINCT ip) ip_count from visit_stats WHERE account_no = :accountNo and code =:code and toYYYYMMDD(start_time) BETWEEN :startTime and :endTime group by country order by pv_count desc")
+  List<VisitStats> queryRegion(
+      @Param("code") String code,
+      @Param("startTime") String startTime,
+      @Param("endTime") String endTime,
+      @Param("accountNo") Long accountNo);
 }

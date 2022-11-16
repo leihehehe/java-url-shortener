@@ -1,15 +1,19 @@
 package com.leih.url.data.service;
 
 import com.leih.url.common.intercepter.LoginInterceptor;
+import com.leih.url.data.controller.request.RegionQueryRequest;
 import com.leih.url.data.controller.request.VisitRecordPageRequest;
 import com.leih.url.data.entity.VisitStats;
 import com.leih.url.data.manager.VisitStatsManager;
+import com.leih.url.data.vo.VisitStatsVo;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 public class VisitStatsServiceImpl implements VisitStatsService{
@@ -25,6 +29,7 @@ public class VisitStatsServiceImpl implements VisitStatsService{
         int count = visitStatsManager.countAll(accountNo,code);
         int from = (page-1)*size;
         List<VisitStats> list = visitStatsManager.paginateVisitRecord(code,accountNo,from,size);
+        List<VisitStatsVo> visitStatsVos = list.stream().map(this::convertVisitStatsToVo).collect(Collectors.toList());
         data.put("total",count);
         data.put("current_page",page);
 
@@ -35,7 +40,20 @@ public class VisitStatsServiceImpl implements VisitStatsService{
             totalPage=count/size+1;
         }
         data.put("total_page",totalPage);
-        data.put("data",list);
+        data.put("data",visitStatsVos);
         return data;
+    }
+
+    @Override
+    public List<VisitStatsVo> queryRegion(RegionQueryRequest request) {
+        Long accountNo = LoginInterceptor.threadLocal.get().getAccountNo();
+        List<VisitStats> visitStatsList = visitStatsManager.queryRegion(request.getCode(),request.getStartTime(),request.getEndTime(),accountNo);
+        List<VisitStatsVo> visitStatsVoList = visitStatsList.stream().map(this::convertVisitStatsToVo).collect(Collectors.toList());
+        return  visitStatsVoList;
+    }
+    public VisitStatsVo convertVisitStatsToVo(VisitStats visitStats){
+        VisitStatsVo visitStatsVo = new VisitStatsVo();
+        BeanUtils.copyProperties(visitStats,visitStatsVo);
+        return visitStatsVo;
     }
 }

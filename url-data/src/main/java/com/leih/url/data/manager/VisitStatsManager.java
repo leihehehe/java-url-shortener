@@ -9,4 +9,6 @@ public interface VisitStatsManager {
     int countAll(Long accountNo, String code);
 
     List<VisitStats> paginateVisitRecord(String code, Long accountNo, int from, int size);
+
+    List<VisitStats> queryRegion(String code, String startTime, String endTime, Long accountNo);
 }
