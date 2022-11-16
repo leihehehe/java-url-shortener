@@ -4,6 +4,7 @@ import com.leih.url.common.enums.BizCodeEnum;
 import com.leih.url.common.util.JsonData;
 import com.leih.url.data.controller.request.RegionQueryRequest;
 import com.leih.url.data.controller.request.VisitRecordPageRequest;
+import com.leih.url.data.controller.request.VisitTrendQueryRequest;
 import com.leih.url.data.service.VisitStatsService;
 import com.leih.url.data.vo.VisitStatsVo;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,6 +35,12 @@ public class VisitStatsController {
     @RequestMapping("region_query")
     public JsonData queryRegion(@RequestBody RegionQueryRequest request){
         List<VisitStatsVo> list = visitStatsService.queryRegion(request);
+        return JsonData.buildSuccess(list);
+    }
+
+    @RequestMapping("trend_query")
+    public JsonData queryVisitTrend(@RequestBody VisitTrendQueryRequest request){
+        List<VisitStatsVo> list = visitStatsService.queryVisitTrend(request);
         return JsonData.buildSuccess(list);
     }
 }

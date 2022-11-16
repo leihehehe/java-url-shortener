@@ -5,7 +5,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.stereotype.Repository;
 import ru.yandex.clickhouse.ClickHouseConnection;
 import ru.yandex.clickhouse.ClickHouseDataSource;
 import ru.yandex.clickhouse.settings.ClickHouseProperties;
@@ -18,7 +17,7 @@ import java.util.Map;
 
 @Slf4j
 @Configuration
-public class ClickHouseConfig {
+public class ClickHouseTemplate {
     private static String url;
     private static String username;
     private static String password;

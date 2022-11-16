@@ -1,6 +1,6 @@
 package com.leih.url.data;
 
-import com.leih.url.data.config.ClickHouseConfig;
+import com.leih.url.data.config.ClickHouseTemplate;
 import com.leih.url.data.entity.VisitStats;
 import com.leih.url.data.manager.VisitStatsManager;
 import lombok.extern.slf4j.Slf4j;
@@ -35,7 +35,7 @@ public class VisitStatsTest {
   public void testRegionQuery(){
     String sql = "select country,sum(pv) pv_count,sum(uv) uv_count,count(DISTINCT ip) ip_count from visit_stats WHERE account_no = '%s' and code ='%s' and toYYYYMMDD(start_time) BETWEEN '%s' and '%s' group by country order by pv_count desc";
     String regionSql = String.format(sql, 790937829298405376L, "aVvyZg0", "20200213", "20221228");
-    List<Map<String, Object>> maps = ClickHouseConfig.sqlQuery(regionSql);
+    List<Map<String, Object>> maps = ClickHouseTemplate.sqlQuery(regionSql);
     System.out.println(maps);
   }
 }
