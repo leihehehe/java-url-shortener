@@ -2,9 +2,7 @@ package com.leih.url.data.controller;
 
 import com.leih.url.common.enums.BizCodeEnum;
 import com.leih.url.common.util.JsonData;
-import com.leih.url.data.controller.request.RegionQueryRequest;
-import com.leih.url.data.controller.request.VisitRecordPageRequest;
-import com.leih.url.data.controller.request.VisitTrendQueryRequest;
+import com.leih.url.data.controller.request.*;
 import com.leih.url.data.service.VisitStatsService;
 import com.leih.url.data.vo.VisitStatsVo;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,7 +11,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.swing.plaf.synth.Region;
 import java.util.List;
 import java.util.Map;
 
@@ -43,4 +40,21 @@ public class VisitStatsController {
         List<VisitStatsVo> list = visitStatsService.queryVisitTrend(request);
         return JsonData.buildSuccess(list);
     }
+
+    /***
+     * Top 10 referrers(sources)
+     * @param request
+     * @return
+     */
+    @RequestMapping("frequent_source_query")
+    public JsonData queryFrequentSource(@RequestBody FrequentSourceRequest request){
+        List<VisitStatsVo> list = visitStatsService.queryFrequentSource(request);
+        return JsonData.buildSuccess(list);
+    }
+    @RequestMapping("device_query")
+    public JsonData queryDeviceInfo(@RequestBody DeviceQueryRequest request){
+        Map<String,List<VisitStatsVo>> map = visitStatsService.queryDeviceInfo(request);
+        return JsonData.buildSuccess(map);
+    }
+
 }

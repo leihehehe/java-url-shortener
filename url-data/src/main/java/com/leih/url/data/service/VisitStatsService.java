@@ -1,8 +1,6 @@
 package com.leih.url.data.service;
 
-import com.leih.url.data.controller.request.RegionQueryRequest;
-import com.leih.url.data.controller.request.VisitRecordPageRequest;
-import com.leih.url.data.controller.request.VisitTrendQueryRequest;
+import com.leih.url.data.controller.request.*;
 import com.leih.url.data.vo.VisitStatsVo;
 
 import java.util.List;
@@ -15,4 +13,7 @@ public interface VisitStatsService {
 
     List<VisitStatsVo> queryVisitTrend(VisitTrendQueryRequest request);
 
+    List<VisitStatsVo> queryFrequentSource(FrequentSourceRequest request);
+
+    Map<String,List<VisitStatsVo>> queryDeviceInfo(DeviceQueryRequest request);
 }

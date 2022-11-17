@@ -1,10 +1,9 @@
 package com.leih.url.data.service;
 
 import com.leih.url.common.enums.DateTimeFieldEnum;
+import com.leih.url.common.enums.DeviceEnum;
 import com.leih.url.common.intercepter.LoginInterceptor;
-import com.leih.url.data.controller.request.RegionQueryRequest;
-import com.leih.url.data.controller.request.VisitRecordPageRequest;
-import com.leih.url.data.controller.request.VisitTrendQueryRequest;
+import com.leih.url.data.controller.request.*;
 import com.leih.url.data.entity.VisitStats;
 import com.leih.url.data.manager.VisitStatsManager;
 import com.leih.url.data.vo.VisitStatsVo;
@@ -53,9 +52,7 @@ public class VisitStatsServiceImpl implements VisitStatsService {
     List<VisitStats> visitStatsList =
         visitStatsManager.queryRegion(
             request.getCode(), request.getStartTime(), request.getEndTime(), accountNo);
-    List<VisitStatsVo> visitStatsVoList =
-        visitStatsList.stream().map(this::convertVisitStatsToVo).collect(Collectors.toList());
-    return visitStatsVoList;
+    return visitStatsList.stream().map(this::convertVisitStatsToVo).collect(Collectors.toList());
   }
 
   @Override
@@ -67,16 +64,45 @@ public class VisitStatsServiceImpl implements VisitStatsService {
     String endTime = request.getEndTime();
     List<VisitStats> visitStatsList = null;
     if (DateTimeFieldEnum.DAY.name().equalsIgnoreCase(type)) {
-      visitStatsList = visitStatsManager.queryDayVisitTrend(accountNo, code, startTime, endTime);
+      visitStatsList = visitStatsManager.queryVisitTrend(accountNo, code, startTime, endTime,DateTimeFieldEnum.DAY);
     } else if (DateTimeFieldEnum.MINUTE.name().equalsIgnoreCase(type)) {
-
+      visitStatsList = visitStatsManager.queryVisitTrend(accountNo, code, startTime, endTime,DateTimeFieldEnum.MINUTE);
     } else if (DateTimeFieldEnum.WEEK.name().equalsIgnoreCase(type)) {
+      visitStatsList = visitStatsManager.queryVisitTrend(accountNo, code, startTime, endTime,DateTimeFieldEnum.WEEK);
 
     }else if (DateTimeFieldEnum.HOUR.name().equalsIgnoreCase(type)) {
-
+      visitStatsList = visitStatsManager.queryVisitTrend(accountNo, code, startTime, endTime,DateTimeFieldEnum.HOUR);
     }
-    List<VisitStatsVo> visitStatsVoList = visitStatsList.stream().map(this::convertVisitStatsToVo).collect(Collectors.toList());
-    return visitStatsVoList;
+    return visitStatsList.stream().map(this::convertVisitStatsToVo).collect(Collectors.toList());
+  }
+
+  @Override
+  public List<VisitStatsVo> queryFrequentSource(FrequentSourceRequest request) {
+    Long accountNo = LoginInterceptor.threadLocal.get().getAccountNo();
+    String code = request.getCode();
+    String startTime = request.getStartTime();
+    String endTime = request.getEndTime();
+    List<VisitStats> visitStatsList = visitStatsManager.queryFrequentSource(accountNo, code, startTime, endTime,10);
+    return visitStatsList.stream().map(this::convertVisitStatsToVo).collect(Collectors.toList());
+  }
+
+  @Override
+  public  Map<String,List<VisitStatsVo>> queryDeviceInfo(DeviceQueryRequest request) {
+    Long accountNo = LoginInterceptor.threadLocal.get().getAccountNo();
+    String code = request.getCode();
+    String startTime = request.getStartTime();
+    String endTime = request.getEndTime();
+    List<VisitStats> osList = visitStatsManager.queryDeviceInfo(accountNo, code, startTime, endTime,DeviceEnum.OS);
+    List<VisitStats> deviceList = visitStatsManager.queryDeviceInfo(accountNo, code, startTime, endTime,DeviceEnum.DEVICE_TYPE);
+    List<VisitStats> browserList = visitStatsManager.queryDeviceInfo(accountNo, code, startTime, endTime,DeviceEnum.BROWSER_NAME);
+    List<VisitStatsVo> osVisitStatsVoList = osList.stream().map(this::convertVisitStatsToVo).toList();
+    List<VisitStatsVo> browserVisitStatsVoList = browserList.stream().map(this::convertVisitStatsToVo).toList();
+    List<VisitStatsVo> deviceTypeVisitStatsVoList = deviceList.stream().map(this::convertVisitStatsToVo).toList();
+    Map<String,List<VisitStatsVo>> map = new HashMap<>(3);
+    map.put("os",osVisitStatsVoList);
+    map.put("browser_name",browserVisitStatsVoList);
+    map.put("device_name",deviceTypeVisitStatsVoList);
+    return map;
   }
 
   public VisitStatsVo convertVisitStatsToVo(VisitStats visitStats) {

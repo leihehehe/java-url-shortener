@@ -1,5 +1,7 @@
 package com.leih.url.data.manager;
 
+import com.leih.url.common.enums.DateTimeFieldEnum;
+import com.leih.url.common.enums.DeviceEnum;
 import com.leih.url.data.entity.VisitStats;
 import com.leih.url.data.vo.VisitStatsVo;
 
@@ -13,6 +15,9 @@ public interface VisitStatsManager {
 
     List<VisitStats> queryRegion(String code, String startTime, String endTime, Long accountNo);
 
-    List<VisitStats> queryDayVisitTrend(Long accountNo, String code, String startTime, String endTime);
+    List<VisitStats> queryVisitTrend(Long accountNo, String code, String startTime, String endTime, DateTimeFieldEnum type);
 
+    List<VisitStats> queryFrequentSource(Long accountNo, String code, String startTime, String endTime, int size);
+
+    List<VisitStats> queryDeviceInfo(Long accountNo, String code, String startTime, String endTime, DeviceEnum type);
 }
