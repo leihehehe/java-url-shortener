@@ -13,19 +13,18 @@ import org.apache.flink.streaming.connectors.kafka.FlinkKafkaProducer;
 
 import java.util.concurrent.TimeUnit;
 
-/**
- * Read data from DWD(Data Warehouse Detail) and write it to DWM(Data Warehouse Middle)
- */
+/** Read data from DWD(Data Warehouse Detail) and write it to DWM(Data Warehouse Middle) */
 public class DwmShortLinkDetailApp {
   /** Define a source topic */
   public static final String SOURCE_TOPIC = "dwd_link_visit_topic";
   /** Define a consumer group */
   public static final String GROUP_ID = "dwm_short_link_group";
+
   public static final String SINK_TOPIC = "dwm_link_visit_topic";
 
   public static void main(String[] args) throws Exception {
     StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
-    env.setParallelism(1);
+    //    env.setParallelism(1);
     // get input stream
     //    DataStream<String> ds = env.socketTextStream("127.0.0.1", 8088, "\n", 10000);
     FlinkKafkaConsumer<String> kafkaConsumer = KafkaUtil.getKafkaConsumer(SOURCE_TOPIC, GROUP_ID);
@@ -35,8 +34,10 @@ public class DwmShortLinkDetailApp {
     SingleOutputStreamOperator<ShortLinkDetail> deviceDS = ds.map(new DeviceMapFunction());
     deviceDS.print("dwm device info added:");
     // location info(country)
-    SingleOutputStreamOperator<String> detailDS= AsyncDataStream.unorderedWait(deviceDS,new AsyncIpLocationFunction(),4000, TimeUnit.MILLISECONDS,100);
-    //SingleOutputStreamOperator<String> detailDS = deviceDS.map(new IpLocationMapFunction());
+    SingleOutputStreamOperator<String> detailDS =
+        AsyncDataStream.unorderedWait(
+            deviceDS, new AsyncIpLocationFunction(), 4000, TimeUnit.MILLISECONDS, 100);
+    // SingleOutputStreamOperator<String> detailDS = deviceDS.map(new IpLocationMapFunction());
     detailDS.print("dwm ip location added:");
     FlinkKafkaProducer<String> kafkaProducer = KafkaUtil.getKafkaProducer(SINK_TOPIC);
     // store into dwm through kafka
