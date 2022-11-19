@@ -15,7 +15,8 @@ public class KafkaUtil {
     private static String  KAFKA_SERVER=null;
     static {
         Properties properties = new Properties();
-        InputStream in = KafkaUtil.class.getClassLoader().getResourceAsStream("application.properties");
+        //change application properties here
+        InputStream in = KafkaUtil.class.getClassLoader().getResourceAsStream("application-local.properties");
         try {
             properties.load(in);
         } catch (IOException e) {
