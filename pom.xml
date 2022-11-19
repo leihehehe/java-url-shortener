@@ -26,10 +26,9 @@
         <maven.compiler.target>17</maven.compiler.target>
         <spring.boot.version>2.5.5</spring.boot.version>
         <spring.cloud.version>2020.0.4</spring.cloud.version>
-        <lombok.version>1.18.16</lombok.version>
+        <lombok.version>1.18.20</lombok.version>
         <commons.lang3.version>3.9</commons.lang3.version>
         <commons.codec.version>1.15</commons.codec.version>
-        <docker.image.prefix>url</docker.image.prefix>
         <redisson.version>3.17.6</redisson.version>
         <jwt.version>0.9.1</jwt.version>
         <sharding-jdbc.version>4.1.1</sharding-jdbc.version>

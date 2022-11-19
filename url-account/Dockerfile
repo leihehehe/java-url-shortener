@@ -1,0 +1,4 @@
+FROM openjdk:17-alpine
+COPY target/url-account.jar url-account.jar
+FROM openjdk:17-alpine
+ENTRYPOINT ["java","--add-opens","java.base/java.lang=ALL-UNNAMED","--add-opens","java.base/java.util=ALL-UNNAMED","-jar","/url-account.jar"]
