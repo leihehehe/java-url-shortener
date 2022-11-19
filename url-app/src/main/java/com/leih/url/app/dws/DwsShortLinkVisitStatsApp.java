@@ -24,7 +24,8 @@ import org.apache.flink.util.Collector;
 import java.time.Duration;
 import java.time.format.DateTimeFormatter;
 /**
- * Read data from DWM(Data Warehouse Middle) and write it to Clickhouse - DWS(Data Warehouse Service)
+ * Read data from DWM(Data Warehouse Middle) and write it to Clickhouse - DWS(Data Warehouse
+ * Service)
  */
 public class DwsShortLinkVisitStatsApp {
   /** Define a source topic */
@@ -38,7 +39,7 @@ public class DwsShortLinkVisitStatsApp {
 
   public static void main(String[] args) throws Exception {
     StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
-    env.setParallelism(1);
+    //    env.setParallelism(1);
     // get data stream from dwm
     FlinkKafkaConsumer<String> shortLinkDetailConsumer =
         KafkaUtil.getKafkaConsumer(SHORT_LINK_DETAIL_SOURCE_TOPIC, SHORT_LINK_DETAIL_GROUP_ID);
@@ -141,8 +142,14 @@ public class DwsShortLinkVisitStatsApp {
                   Collector<Object> collector)
                   throws Exception {
                 for (ShortLinkVisitStats visitStats : iterable) {
-                  String startTime = TimeUtil.format(context.window().getStart(), DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
-                  String endTime = TimeUtil.format(context.window().getEnd(),DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+                  String startTime =
+                      TimeUtil.format(
+                          context.window().getStart(),
+                          DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+                  String endTime =
+                      TimeUtil.format(
+                          context.window().getEnd(),
+                          DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
                   visitStats.setStartTime(startTime);
                   visitStats.setEndTime(endTime);
                   collector.collect(visitStats);

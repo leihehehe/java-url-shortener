@@ -33,13 +33,13 @@ public class DwdShortLinkLogApp {
 
   public static void main(String[] args) throws Exception {
     StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
-    env.setParallelism(1);
+    //    env.setParallelism(1);
     // get input stream
-//        DataStream<String> ds = env.socketTextStream("127.0.0.1", 8088, "\n", 10000);
+    //        DataStream<String> ds = env.socketTextStream("127.0.0.1", 8088, "\n", 10000);
     FlinkKafkaConsumer<String> kafkaConsumer = KafkaUtil.getKafkaConsumer(SOURCE_TOPIC, GROUP_ID);
     // use kafka as a source
     DataStreamSource<String> ds = env.addSource(kafkaConsumer);
-//    ds.print();
+    //    ds.print();
     // deal with the raw data
     SingleOutputStreamOperator<ObjectNode> jsonDS =
         ds.flatMap(
