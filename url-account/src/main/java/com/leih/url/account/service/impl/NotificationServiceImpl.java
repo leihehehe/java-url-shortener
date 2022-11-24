@@ -34,6 +34,9 @@ public class NotificationServiceImpl implements NotificationService {
    * @return
    */
   public JsonData sendCode(SendCodeEnum sendCodeEnum, String to) {
+    if (!CheckUtil.isPhone(to)) {
+      return JsonData.buildResult(BizCodeEnum.CODE_TO_ERROR);
+    }
     String codeKeyInRedis = String.format(RedisKey.CHECK_CODE_KEY, sendCodeEnum.name(), to);
     String codeValueInRedis = redisTemplate.opsForValue().get(codeKeyInRedis);
     if (StringUtils.hasLength(codeValueInRedis)) {
@@ -52,13 +55,10 @@ public class NotificationServiceImpl implements NotificationService {
     redisTemplate.opsForValue().set(codeKeyInRedis, value, CODE_EXPIRED, TimeUnit.MILLISECONDS);
     boolean result;
     // TODO: sending emails
-    if (CheckUtil.isPhone(to)) {
-      result = smsComponent.sendSms(to, "[Easy URL Shortener] Your code is " + code + "(valid for 10 minutes)");
-      return result
-          ? JsonData.buildSuccess(BizCodeEnum.CODE_SUCCESS)
-          : JsonData.buildSuccess(BizCodeEnum.CODE_FAILED);
-    }
-    return JsonData.buildResult(BizCodeEnum.CODE_TO_ERROR);
+    result = smsComponent.sendSms(to, "[Easy URL Shortener] Your code is " + code + "(valid for 10 minutes)");
+    return result
+        ? JsonData.buildSuccess(BizCodeEnum.CODE_SUCCESS)
+        : JsonData.buildSuccess(BizCodeEnum.CODE_FAILED);
   }
 
   @Override

@@ -7,10 +7,12 @@ import com.leih.url.account.entity.Account;
 import com.leih.url.account.manager.AccountManager;
 import com.leih.url.account.service.AccountService;
 import com.leih.url.account.service.NotificationService;
+import com.leih.url.account.vo.AccountVo;
 import com.leih.url.common.enums.AuthTypeEnum;
 import com.leih.url.common.enums.BizCodeEnum;
 import com.leih.url.common.enums.EventMessageTypeEnum;
 import com.leih.url.common.enums.SendCodeEnum;
+import com.leih.url.common.intercepter.LoginInterceptor;
 import com.leih.url.common.model.EventMessage;
 import com.leih.url.common.model.LoggedInUser;
 import com.leih.url.common.util.CommonUtil;
@@ -109,5 +111,14 @@ public class AccountServiceImpl implements AccountService {
             return JsonData.buildResult(BizCodeEnum.ACCOUNT_UNREGISTER);
         }
         return null;
+    }
+
+    @Override
+    public JsonData getDetail() {
+        Long accountNo = LoginInterceptor.threadLocal.get().getAccountNo();
+        Account account = accountManager.getDetail(accountNo);
+        AccountVo accountVo = new AccountVo();
+        BeanUtils.copyProperties(account,accountVo);
+        return JsonData.buildSuccess(accountVo);
     }
 }

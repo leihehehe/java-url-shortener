@@ -9,4 +9,6 @@ import org.springframework.stereotype.Service;
 public interface AccountService {
     JsonData register(AccountRegisterRequest registerRequest);
     JsonData login(AccountLoginRequest loginRequest);
+
+    JsonData getDetail();
 }

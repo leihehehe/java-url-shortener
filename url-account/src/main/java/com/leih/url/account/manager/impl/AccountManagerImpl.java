@@ -21,4 +21,9 @@ public class AccountManagerImpl implements AccountManager {
     public Account findAccountByPhone(String phone) {
         return accountRepository.findAccountByPhone(phone);
     }
+
+    @Override
+    public Account getDetail(Long accountNo) {
+        return accountRepository.findAccountByAccountNo(accountNo);
+    }
 }
