@@ -24,4 +24,14 @@ public class CheckUtil {
     Matcher m = PHONE_PATTERN.matcher(phone);
     return m.matches();
   }
+
+  public static boolean isUsername(String username) {
+    if (username == null || "".equals(username)) {
+      return false;
+    }
+    if (username.contains("@") || username.contains("+")) {
+      return false;
+    }
+    return true;
+    }
 }

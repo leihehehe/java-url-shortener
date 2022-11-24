@@ -23,6 +23,11 @@ public class AccountManagerImpl implements AccountManager {
     }
 
     @Override
+    public Account findAccountByUsername(String username) {
+        return accountRepository.findAccountByUsername(username);
+    }
+
+    @Override
     public Account getDetail(Long accountNo) {
         return accountRepository.findAccountByAccountNo(accountNo);
     }

@@ -8,17 +8,11 @@ import com.leih.url.account.manager.AccountManager;
 import com.leih.url.account.service.AccountService;
 import com.leih.url.account.service.NotificationService;
 import com.leih.url.account.vo.AccountVo;
-import com.leih.url.common.enums.AuthTypeEnum;
-import com.leih.url.common.enums.BizCodeEnum;
-import com.leih.url.common.enums.EventMessageTypeEnum;
-import com.leih.url.common.enums.SendCodeEnum;
+import com.leih.url.common.enums.*;
 import com.leih.url.common.intercepter.LoginInterceptor;
 import com.leih.url.common.model.EventMessage;
 import com.leih.url.common.model.LoggedInUser;
-import com.leih.url.common.util.CommonUtil;
-import com.leih.url.common.util.IdUtil;
-import com.leih.url.common.util.JWTUtil;
-import com.leih.url.common.util.JsonData;
+import com.leih.url.common.util.*;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.codec.digest.Md5Crypt;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
@@ -53,6 +47,12 @@ public class AccountServiceImpl implements AccountService {
         if(!checkCode){
             return JsonData.buildResult(BizCodeEnum.CODE_ERROR);
         }
+        if(!CheckUtil.isPhone(registerRequest.getPhone())){
+            return JsonData.buildResult(BizCodeEnum.CODE_TO_ERROR);
+        }
+        if(!CheckUtil.isUsername(registerRequest.getUsername())){
+            return JsonData.buildResult(BizCodeEnum.ACCOUNT_REGISTER_USERNAME_ERROR);
+        }
         Account account = new Account();
         BeanUtils.copyProperties(registerRequest,account);
 
@@ -61,17 +61,12 @@ public class AccountServiceImpl implements AccountService {
         account.setSecret("$1$"+CommonUtil.getStringNumRandom(8));
         String encryptedPass = Md5Crypt.md5Crypt(registerRequest.getPassword().getBytes(), account.getSecret());
         account.setPassword(encryptedPass);
-        try{
-            accountManager.insertAccount(account);
-            log.info("Register success: {}",account);
-            //assign free plans
-            userRegisterInitFree(account);
-            return JsonData.buildSuccess();
-        }catch (Exception e){
-            log.info("Register failed: {}",e.getMessage());
-            return JsonData.buildResult(BizCodeEnum.ACCOUNT_REPEAT);
-        }
 
+        accountManager.insertAccount(account);
+        log.info("Register success: {}",account);
+        //assign free plans
+        userRegisterInitFree(account);
+        return JsonData.buildResult(BizCodeEnum.ACCOUNT_REGISTER_SUCCESS);
     }
 
     private static final Long FREE_INIT_PRODUCT_ID=1L;
@@ -95,8 +90,12 @@ public class AccountServiceImpl implements AccountService {
      */
     @Override
     public JsonData login(AccountLoginRequest loginRequest) {
-        Account account = accountManager.findAccountByPhone(loginRequest.getPhone());
-        //TODO: login by username
+        Account account=null;
+        if(LoginTypeEnum.PHONE_LOGIN.name().equalsIgnoreCase(loginRequest.getLoginType())){
+            account = accountManager.findAccountByPhone(loginRequest.getLoginReference());
+        }else if(LoginTypeEnum.USERNAME_LOGIN.name().equalsIgnoreCase(loginRequest.getLoginType())){
+            account = accountManager.findAccountByUsername(loginRequest.getLoginReference());
+        }
         if(account!=null){
             String toBeVerified = Md5Crypt.md5Crypt(loginRequest.getPassword().getBytes(), account.getSecret());
             if(toBeVerified.equals(account.getPassword())){
@@ -105,18 +104,22 @@ public class AccountServiceImpl implements AccountService {
                 BeanUtils.copyProperties(account,loggedInUser);
                 String token = JWTUtil.generateJsonWebToken(loggedInUser);
                 return JsonData.buildSuccess(token);
+            }else{
+                return JsonData.buildResult(BizCodeEnum.ACCOUNT_PWD_ERROR);
             }
         }else{
-            log.info("The account {} does not exist!",loginRequest.getPhone());
+            log.info("The account {} does not exist!",loginRequest.getLoginReference());
             return JsonData.buildResult(BizCodeEnum.ACCOUNT_UNREGISTER);
         }
-        return null;
     }
 
     @Override
     public JsonData getDetail() {
         Long accountNo = LoginInterceptor.threadLocal.get().getAccountNo();
         Account account = accountManager.getDetail(accountNo);
+        if(account==null){
+            return JsonData.buildResult(BizCodeEnum.ACCOUNT_UNLOGIN);
+        }
         AccountVo accountVo = new AccountVo();
         BeanUtils.copyProperties(account,accountVo);
         return JsonData.buildSuccess(accountVo);
