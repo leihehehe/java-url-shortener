@@ -3,8 +3,10 @@ package com.leih.url.account.manager;
 import com.leih.url.account.entity.Account;
 
 public interface AccountManager {
-    public void insertAccount(Account account);
-    public Account findAccountByPhone(String phone);
+  void insertAccount(Account account);
 
-    Account getDetail(Long accountNo);
+  Account findAccountByPhone(String phone);
+
+  Account findAccountByUsername(String username);
+  Account getDetail(Long accountNo);
 }

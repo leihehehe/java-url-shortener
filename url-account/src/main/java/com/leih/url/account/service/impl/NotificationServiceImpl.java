@@ -57,8 +57,8 @@ public class NotificationServiceImpl implements NotificationService {
     // TODO: sending emails
     result = smsComponent.sendSms(to, "[Easy URL Shortener] Your code is " + code + "(valid for 10 minutes)");
     return result
-        ? JsonData.buildSuccess(BizCodeEnum.CODE_SUCCESS)
-        : JsonData.buildSuccess(BizCodeEnum.CODE_FAILED);
+        ? JsonData.buildResult(BizCodeEnum.CODE_SUCCESS)
+        : JsonData.buildResult(BizCodeEnum.CODE_FAILED);
   }
 
   @Override

@@ -40,7 +40,18 @@ public class AccountController {
      */
     @PostMapping("register")
     public JsonData register(@RequestBody AccountRegisterRequest registerRequest){
-        return accountService.register(registerRequest);
+        try{
+            return accountService.register(registerRequest);
+        }catch (Exception e){
+            log.error("Failed to register the account:{}",e.getMessage());
+            if(e.getMessage().contains("uk_phone")){
+                return JsonData.buildResult(BizCodeEnum.ACCOUNT_PHONE_DUPLICATES);
+            }else {
+                return JsonData.buildResult(BizCodeEnum.ACCOUNT_USERNAME_DUPLICATES);
+            }
+
+        }
+
     }
 
     @PostMapping("login")

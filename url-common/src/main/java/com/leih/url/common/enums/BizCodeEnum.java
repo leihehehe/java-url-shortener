@@ -21,10 +21,13 @@ public enum BizCodeEnum {
   CODE_FAILED(240005, "Failed to send code"),
   CODE_CAPTCHA_ERROR(240101, "Incorrect CAPTCHA"),
   /** Account */
-  ACCOUNT_REPEAT(250001, "The account has been created"),
+  ACCOUNT_PHONE_DUPLICATES(250001, "The phone number has been used, please try another"),
   ACCOUNT_UNREGISTER(250002, "The account does not exist"),
-  ACCOUNT_PWD_ERROR(250003, "Invalid username or password"),
+  ACCOUNT_PWD_ERROR(250003, "Invalid username/phone or password"),
   ACCOUNT_UNLOGIN(250004, "You haven't logged in"),
+  ACCOUNT_USERNAME_DUPLICATES(250005, "The username has been used, please try another"),
+  ACCOUNT_REGISTER_SUCCESS(250006, "Your account has been successfully created"),
+  ACCOUNT_REGISTER_USERNAME_ERROR(250007, "Invalid Username"),
   /** Short url */
   SHORT_LINK_NOT_EXIST(260404, "The url does not exist"),
   /** Order */
