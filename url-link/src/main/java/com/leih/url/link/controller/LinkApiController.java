@@ -31,6 +31,10 @@ public class LinkApiController {
     return shortLinkCode.matches(regx);
   }
 
+  /**
+   * 1980-01-01 00:00:00
+   */
+  private static Long PERMANENT_TIME = 315504000000L;
   /***
    * Check if the shortened url is activated
    * @param shortLink
@@ -43,6 +47,10 @@ public class LinkApiController {
         return true;
       }
       log.error("The shortened url has been locked.");
+    } else if(shortLink != null && shortLink.getExpired().getTime() <PERMANENT_TIME) {
+      if (shortLink.getState().equalsIgnoreCase(ShortLinkStateEnum.ACTIVATED.name())) {
+        return true;
+      }
     }
     log.error("The shortened url does not exist or has already expired.");
     return false;

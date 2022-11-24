@@ -47,4 +47,10 @@ public class AccountController {
     public JsonData login(@RequestBody AccountLoginRequest request){
         return accountService.login(request);
     }
+
+    @GetMapping("detail")
+    public JsonData detail(){
+        JsonData jsonData = accountService.getDetail();
+        return jsonData;
+    }
 }

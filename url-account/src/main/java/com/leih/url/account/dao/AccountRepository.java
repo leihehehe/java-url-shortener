@@ -11,4 +11,5 @@ import javax.transaction.Transactional;
 public interface AccountRepository extends JpaRepository<Account,Long> {
     Account findAccountByUsername(String username);
     Account findAccountByPhone(String phone);
+    Account findAccountByAccountNo(Long accountNo);
 }

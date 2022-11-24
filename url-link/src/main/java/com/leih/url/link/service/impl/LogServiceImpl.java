@@ -19,7 +19,8 @@ import java.util.*;
 public class LogServiceImpl implements LogService {
   private static final String TOPIC_NAME = "ods_link_visit_topic";
   /** Test */
-  private static List<String> ipList = new ArrayList<>();
+/*  private static List<String> ipList = new ArrayList<>();
+
   private static List<String> refererList = new ArrayList<>();
 
   static {
@@ -27,7 +28,7 @@ public class LogServiceImpl implements LogService {
     ipList.add("69.162.81.155");
     refererList.add("https://youtube.com");
     refererList.add("https://google.com");
-  }
+  }*/
 
   @Autowired private KafkaTemplate<String, Object> kafkaTemplate;
   private Random random = new Random();
@@ -36,14 +37,14 @@ public class LogServiceImpl implements LogService {
   public void recordShortLinkCode(
       HttpServletRequest request, String shortLinkCode, Long accountNo) {
     // IP, agent
-    // String ipAddress = CommonUtil.getIpAddress(request);
-    String ipAddress = ipList.get(random.nextInt(ipList.size()));
+    String ipAddress = CommonUtil.getIpAddress(request);
+    //    String ipAddress = ipList.get(random.nextInt(ipList.size()));
     // get all headers
     Map<String, String> allRequestHeader = CommonUtil.getAllRequestHeader(request);
     Map<String, String> map = new HashMap<>();
     map.put("user-agent", allRequestHeader.get("user-agent"));
-    map.put("referer", refererList.get(random.nextInt(refererList.size())));
-    // map.put("referer",allRequestHeader.get("referer"));
+    //    map.put("referer", refererList.get(random.nextInt(refererList.size())));
+    map.put("referer", allRequestHeader.get("referer"));
     map.put("accountNo", String.valueOf(accountNo));
     LogRecord logRecord =
         LogRecord.builder()

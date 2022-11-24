@@ -262,8 +262,13 @@ public class PlanServiceImpl implements PlanService {
   }
 
   public PlanVo convertPlanToVo(Plan plan) {
-    PlanVo productOrderVo = new PlanVo();
-    BeanUtils.copyProperties(plan, productOrderVo);
-    return productOrderVo;
+    PlanVo planVo = new PlanVo();
+    BeanUtils.copyProperties(plan, planVo);
+    String todayStr = TimeUtil.format(new Date(),"yyyy-MM-dd");
+    String trafficUpdateStr = TimeUtil.format(plan.getGmtModified(),"yyyy-MM-dd");
+    if(!todayStr.equalsIgnoreCase(trafficUpdateStr)){
+      planVo.setDayUsed(0);
+    }
+    return planVo;
   }
 }
