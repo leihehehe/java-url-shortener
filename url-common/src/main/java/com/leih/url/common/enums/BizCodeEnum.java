@@ -63,7 +63,7 @@ public enum BizCodeEnum {
   OPS_REPEAT(110001, "Duplicate operation"),
   OPS_NETWORK_ADDRESS_ERROR(110002, "Invalid network address"),
   /** Files */
-  FILE_UPLOAD_USER_IMG_FAIL(700101, "Failed to upload user avatar"),
+  FILE_UPLOAD_USER_AVATAR_FAILED(700101, "Failed to upload the avatar, please try again"),
 
   /** Sharding jdbc code */
   DB_ROUTE_NOT_FOUND(800101, "Failed to upload user avatar"),

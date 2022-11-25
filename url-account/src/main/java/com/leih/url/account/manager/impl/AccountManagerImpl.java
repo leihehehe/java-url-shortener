@@ -31,4 +31,15 @@ public class AccountManagerImpl implements AccountManager {
     public Account getDetail(Long accountNo) {
         return accountRepository.findAccountByAccountNo(accountNo);
     }
+
+    @Override
+    public boolean updateAvatar(Long accountNo, String avatar) {
+        try{
+            accountRepository.updateAvatar(accountNo,avatar);
+            return true;
+        }catch (Exception e){
+            log.error("Failed to update avatar:{}",e.getMessage());
+            return false;
+        }
+    }
 }
