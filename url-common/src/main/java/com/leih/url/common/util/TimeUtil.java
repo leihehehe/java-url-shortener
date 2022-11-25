@@ -1,6 +1,7 @@
 package com.leih.url.common.util;
 
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
@@ -93,5 +94,16 @@ public class TimeUtil {
         LocalDateTime.ofInstant(currentDate.toInstant(), ZoneId.systemDefault());
     long seconds = ChronoUnit.SECONDS.between(currentDateTime, midnight);
     return (int) seconds;
+  }
+
+
+  public static LocalDateTime atEndOfDay(Date date) {
+    LocalDateTime localDateTime = dateToLocalDateTime(date);
+    LocalDateTime endOfDay = localDateTime.with(LocalTime.MAX);
+    return endOfDay;
+  }
+
+  private static LocalDateTime dateToLocalDateTime(Date date) {
+    return LocalDateTime.ofInstant(date.toInstant(), ZoneId.systemDefault());
   }
 }

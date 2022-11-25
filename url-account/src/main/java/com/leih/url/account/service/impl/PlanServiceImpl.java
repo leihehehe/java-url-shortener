@@ -25,6 +25,7 @@ import com.leih.url.common.util.JsonData;
 import com.leih.url.common.util.JsonUtil;
 import com.leih.url.common.util.TimeUtil;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang.time.DateUtils;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,6 +37,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
@@ -96,6 +98,9 @@ public class PlanServiceImpl implements PlanService {
       JsonData jsonData = productFeignService.getProductDetail(productId);
       try {
         ProductVo productVo = jsonData.getData(new TypeReference<ProductVo>() {});
+        LocalDateTime localDateTime = TimeUtil.atEndOfDay(new Date());
+        Timestamp expiredDateTime = Timestamp.valueOf(localDateTime);
+
         Plan initPlan =
             Plan.builder()
                 .accountNo(accountNo)
@@ -106,11 +111,11 @@ public class PlanServiceImpl implements PlanService {
                 .level(productVo.getLevel())
                 .productId(productVo.getId())
                 .orderNo("free_init")
-                .expiredDate(new Timestamp(new Date().getTime()))
+                .expiredDate(expiredDateTime)
                 .build();
         planManager.addPlan(initPlan);
       } catch (Exception e) {
-        log.error("Failed to init free plans for the new account");
+        log.error("Failed to init free plans for the new account:{}",e.getMessage());
         throw new BizException(BizCodeEnum.MQ_CONSUMER_EXCEPTION);
       }
     }else if (EventMessageTypeEnum.LINK_CHECK_IF_CREATED.name().equalsIgnoreCase(eventMessage.getEventMessageType())){
