@@ -30,7 +30,7 @@ public class AccountServiceImpl implements AccountService {
     NotificationService notificationService;
     @Autowired
     AccountManager accountManager;
-
+    private String DEFAULT_AVATAR ="https://leih-aws-bucket.s3.ap-southeast-2.amazonaws.com/user/2022/10/03/avatar.png";
     /***
      * Register
      * @param registerRequest
@@ -41,6 +41,7 @@ public class AccountServiceImpl implements AccountService {
     public JsonData register(AccountRegisterRequest registerRequest) {
         //check if code is correct
         boolean checkCode=false;
+        registerRequest.setPhone(StringUtils.trimAllWhitespace(registerRequest.getPhone()));
         if(StringUtils.hasLength(registerRequest.getPhone())){
             checkCode = notificationService.checkCode(SendCodeEnum.USER_REGISTER, registerRequest.getPhone(), registerRequest.getCode());
         }
@@ -61,7 +62,7 @@ public class AccountServiceImpl implements AccountService {
         account.setSecret("$1$"+CommonUtil.getStringNumRandom(8));
         String encryptedPass = Md5Crypt.md5Crypt(registerRequest.getPassword().getBytes(), account.getSecret());
         account.setPassword(encryptedPass);
-
+        account.setAvatar(DEFAULT_AVATAR);
         accountManager.insertAccount(account);
         log.info("Register success: {}",account);
         //assign free plans

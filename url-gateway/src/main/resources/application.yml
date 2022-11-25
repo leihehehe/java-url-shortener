@@ -25,6 +25,8 @@ spring:
           order: 2
           predicates:
             - Path=/link-server/**
+          filters:
+            - StripPrefix=1
         - id: url-data-service
           uri: lb://url-data-service
           order: 3
