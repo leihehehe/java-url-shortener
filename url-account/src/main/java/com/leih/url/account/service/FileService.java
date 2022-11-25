@@ -1,7 +1,8 @@
 package com.leih.url.account.service;
 
+import com.leih.url.common.util.JsonData;
 import org.springframework.web.multipart.MultipartFile;
 
 public interface FileService {
-    String uploadAvatar(MultipartFile file);
+    JsonData uploadAvatar(MultipartFile file);
 }

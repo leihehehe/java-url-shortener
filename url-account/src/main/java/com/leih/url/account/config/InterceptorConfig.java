@@ -12,7 +12,7 @@ public class InterceptorConfig implements WebMvcConfigurer {
         registry.addInterceptor(new LoginInterceptor())
                 //add paths to be intercepted
                 .addPathPatterns("/api/account/*/**","/api/plan/*/**")
-                .excludePathPatterns("/api/account/*/register","/api/account/*/login","/api/account/*/upload",
+                .excludePathPatterns("/api/account/*/register","/api/account/*/login",
                         "/api/notification/*/captcha","/api/notification/*/send_code","/api/plan/*/use");
     }
 }

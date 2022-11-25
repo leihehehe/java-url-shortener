@@ -29,8 +29,7 @@ public class AccountController {
      */
     @PostMapping("upload")
     public JsonData uploadAvatar(@RequestPart("file")MultipartFile file){
-        String result = fileService.uploadAvatar(file);
-        return result!=null?JsonData.buildSuccess(result):JsonData.buildResult(BizCodeEnum.FILE_UPLOAD_USER_IMG_FAIL);
+        return fileService.uploadAvatar(file);
     }
 
     /***
@@ -64,4 +63,5 @@ public class AccountController {
         JsonData jsonData = accountService.getDetail();
         return jsonData;
     }
+
 }

@@ -124,4 +124,11 @@ public class AccountServiceImpl implements AccountService {
         BeanUtils.copyProperties(account,accountVo);
         return JsonData.buildSuccess(accountVo);
     }
+
+    @Override
+    public boolean updateAvatar(String uploadUrl) {
+        Long accountNo = LoginInterceptor.threadLocal.get().getAccountNo();
+        return accountManager.updateAvatar(accountNo, uploadUrl);
+    }
+
 }
