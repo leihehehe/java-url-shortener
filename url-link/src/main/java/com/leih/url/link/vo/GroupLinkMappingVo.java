@@ -1,12 +1,16 @@
 package com.leih.url.link.vo;
 
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import lombok.Data;
 
 import java.sql.Timestamp;
 
 @Data
 public class GroupLinkMappingVo {
+    @JsonSerialize(using = ToStringSerializer.class)
     private long id;
+    @JsonSerialize(using = ToStringSerializer.class)
     private long groupId;
     private String name;
     private String originalUrl;
