@@ -1,5 +1,7 @@
 package com.leih.url.link.vo;
 
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import lombok.Data;
 
 import java.sql.Timestamp;
@@ -9,6 +11,7 @@ import java.sql.Timestamp;
  */
 @Data
 public class LinkGroupVo {
+    @JsonSerialize(using = ToStringSerializer.class)
     private long id;
     private String name;
     private long accountNo;
