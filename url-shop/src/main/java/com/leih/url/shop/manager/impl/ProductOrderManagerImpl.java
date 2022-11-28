@@ -52,10 +52,10 @@ public class ProductOrderManagerImpl implements ProductOrderManager {
     public Map<String, Object> page(int page, int size, Long accountNo, String state) {
         Page<ProductOrder> pages;
         PageRequest pageRequest = PageRequest.of(page, size);
-        if(!StringUtils.hasLength(state)){
-             pages= productOrderRepository.findAllByAccountNoAndDel(pageRequest, accountNo,0);
+        if(!StringUtils.hasLength(state) || state.equalsIgnoreCase("all")){
+             pages= productOrderRepository.findAllByAccountNoAndDelOrderByCreateTimeDesc(pageRequest, accountNo,0);
         }else{
-            pages=productOrderRepository.findAllByAccountNoAndStateAndDel(pageRequest,accountNo,state,0);
+            pages=productOrderRepository.findAllByAccountNoAndStateAndDelOrderByCreateTimeDesc(pageRequest,accountNo,state,0);
         }
         Map<String, Object> pageInfo = new HashMap<>(3);
         pageInfo.put("total_records", pages.getTotalElements());

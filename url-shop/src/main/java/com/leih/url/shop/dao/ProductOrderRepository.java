@@ -20,8 +20,8 @@ public interface ProductOrderRepository extends JpaRepository<ProductOrder,Long>
     @Query("update ProductOrder set state=:newState where orderNo=:orderNo and accountNo=:accountNo and state=:oldState and del=0")
 
     int updatePaymentState(@Param("orderNo") String orderNo,@Param("accountNo") Long accountNo, @Param("newState")String newState, @Param("oldState")String oldState);
-    Page<ProductOrder> findAllByAccountNoAndDel(Pageable pageable, Long accountNo,int del);
-    Page<ProductOrder> findAllByAccountNoAndStateAndDel(Pageable pageable, Long accountNo,String state,int del);
+    Page<ProductOrder> findAllByAccountNoAndDelOrderByCreateTimeDesc(Pageable pageable, Long accountNo,int del);
+    Page<ProductOrder> findAllByAccountNoAndStateAndDelOrderByCreateTimeDesc(Pageable pageable, Long accountNo,String state,int del);
     @Transactional
     @Modifying
     @Query("update ProductOrder set del=1 where id=:productOrderId and accountNo=:accountNo and del=0")
