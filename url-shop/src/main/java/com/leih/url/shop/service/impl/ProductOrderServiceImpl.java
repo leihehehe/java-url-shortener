@@ -63,6 +63,9 @@ public class ProductOrderServiceImpl implements ProductOrderService {
   public JsonData createOrder(CreateOrderRequest createOrderRequest) {
     LoggedInUser loggedInUser = LoginInterceptor.threadLocal.get();
     String orderNo = CommonUtil.getStringNumRandom(32);
+    if(createOrderRequest.getProductId()==1){
+      return JsonData.buildResult(BizCodeEnum.ORDER_CREATE_PRICE_FAIL);
+    }
     Product product = productManager.getProductDetail(createOrderRequest.getProductId());
     if (!checkPrice(product, createOrderRequest)) {
       log.error("Inconsistent price:{}", createOrderRequest);
@@ -254,7 +257,6 @@ public class ProductOrderServiceImpl implements ProductOrderService {
             .billContent(createOrderRequest.getBillContent())
             .build();
     // TODO: invoke payment info
-    // TODO: send delayed messages to close the order
 
     productOrderManager.addProductOrder(productOrder);
     return productOrder;
@@ -262,6 +264,8 @@ public class ProductOrderServiceImpl implements ProductOrderService {
 
   public boolean checkPrice(Product product, CreateOrderRequest createOrderRequest) {
     Double expectedTotalPrice = Double.valueOf(createOrderRequest.getBuyNum()) * product.getPrice();
+    log.info("expected total price:{}",expectedTotalPrice);
+    log.info("actual total price:{}",createOrderRequest.getPayPrice());
     // deduct price if any vouchers here
     return expectedTotalPrice.compareTo(createOrderRequest.getPayPrice()) == 0;
   }
