@@ -30,6 +30,7 @@ public enum BizCodeEnum {
   ACCOUNT_REGISTER_USERNAME_ERROR(250007, "Invalid Username"),
   /** Short url */
   SHORT_LINK_NOT_EXIST(260404, "The url does not exist"),
+  ORIGINAL_URL_NOT_CORRECT(260405,"The url must start with http// or https//"),
   /** Order */
   ORDER_CREATE_PRICE_FAIL(280002, "Create Order - Failed to confirm the price"),
   ORDER_CREATE_REPEAT(280008, "Duplicate Submission for order or the order does not exist"),
@@ -55,7 +56,7 @@ public enum BizCodeEnum {
   CONTROL_AUTH(500301, "Authentication control"),
   /** 􁁞􁰁􀛱􀶙􀖢 */
   PLAN_FREE_NOT_EXIST(600101, "We currently don't offer free data, please contact us."),
-  PLAN_REDUCE_FAIL(600102, "Insufficient data, failed to deduct data"),
+  PLAN_REDUCE_FAIL(600102, "Insufficient plan data, failed to deduct your plan data"),
 
   PLAN_EXCEPTION(600103, "Abnormal data, user does not have data"),
 
