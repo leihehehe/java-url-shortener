@@ -1,5 +1,6 @@
 package com.leih.url.link.service.impl;
 
+import com.ctc.wstx.util.URLUtil;
 import com.leih.url.common.constant.RedisKey;
 import com.leih.url.common.enums.BizCodeEnum;
 import com.leih.url.common.enums.DomainTypeEnum;
@@ -27,6 +28,7 @@ import com.leih.url.link.service.ShortLinkService;
 import com.leih.url.link.vo.LinkVo;
 import io.jsonwebtoken.lang.Assert;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.assertj.core.util.Arrays;
 import org.redisson.api.RedissonClient;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
@@ -78,6 +80,9 @@ public class ShortLinkServiceImpl implements ShortLinkService {
     log.info("Available times:{}", leftTimes);
     if (leftTimes >= 0) {
       // avoid url conflicts
+      if(!StringUtils.startsWithAny(request.getOriginalUrl(),"https://","http://")){
+        return JsonData.buildResult(BizCodeEnum.ORIGINAL_URL_NOT_CORRECT);
+      }
       String newOriginalUrl = CommonUtil.addUrlPrefix(request.getOriginalUrl());
       request.setOriginalUrl(newOriginalUrl);
       EventMessage eventMessage =
