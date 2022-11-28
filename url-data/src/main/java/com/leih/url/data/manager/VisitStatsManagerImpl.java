@@ -28,9 +28,33 @@ public class VisitStatsManagerImpl implements VisitStatsManager {
 
   @Override
   public List<VisitStats> paginateVisitRecord(String code, Long accountNo, int from, int size) {
+    String sql = "select * from visit_stats where account_no= '%s' and code= '%s' order by timestamp desc limit %s,%s";
+    String visitSql = String.format(sql, accountNo, code, from, size);
+    List<Map<String, Object>> maps = ClickHouseTemplate.sqlQuery(visitSql);
     List<VisitStats> visitStatsList =
-        visitStatsRepository.paginateVisitRecord(accountNo, code, from, size);
+            maps.stream().map(this::visitConvertToVisitStats).collect(Collectors.toList());
     return visitStatsList;
+  }
+
+  private VisitStats visitConvertToVisitStats(Map<String, Object> map) {
+    VisitStats visitStats =
+            VisitStats.builder()
+                    .deviceType((String) map.getOrDefault("device_type",null))
+                    .ip((String) map.getOrDefault("ip",null))
+                    .referer((String)map.getOrDefault("referer",null))
+                    .endTime((String) map.getOrDefault("start_time",null))
+                    .startTime((String) map.getOrDefault("end_time",null))
+                    .os((String) map.getOrDefault("os",null))
+                    .accountNo(Long.valueOf((String)map.getOrDefault("account_no",null)))
+                    .code((String) map.getOrDefault("code",null))
+                    .isNew(Integer.valueOf((String) map.getOrDefault("is_new",null)))
+                    .country((String) map.getOrDefault("country",null))
+                    .browserName((String) map.getOrDefault("browser_name",null))
+                    .pv(Long.valueOf((String)map.getOrDefault("pv",null)))
+                    .uv(Long.valueOf((String)map.getOrDefault("uv",null)))
+                    .visitTime(Long.valueOf((String) map.getOrDefault("timestamp",null)))
+                    .build();
+    return visitStats;
   }
 
   @Override
@@ -98,7 +122,7 @@ public class VisitStatsManagerImpl implements VisitStatsManager {
     VisitStats visitStats =
             VisitStats.builder()
                     .dateTimeStr((String) map.getOrDefault("date_time_str",null))
-                    .country((String) map.getOrDefault("new_uv_count",null))
+                    .newUVCount(Long.valueOf((String) map.getOrDefault("new_uv_count",null)))
                     .uvCount(Long.parseLong((String) map.getOrDefault("uv_count",null)))
                     .ipCount(Long.parseLong((String) map.getOrDefault("ip_count",null)))
                     .pvCount(Long.parseLong((String) map.getOrDefault("pv_count",null)))

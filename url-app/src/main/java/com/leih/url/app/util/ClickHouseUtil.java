@@ -22,7 +22,7 @@ public class ClickHouseUtil {
   private static String CLICK_HOUSE_PASSWORD=null;
   static {
     Properties properties = new Properties();
-    InputStream in = KafkaUtil.class.getClassLoader().getResourceAsStream("application.properties");
+    InputStream in = KafkaUtil.class.getClassLoader().getResourceAsStream("application-local.properties");
     try {
       properties.load(in);
     } catch (IOException e) {

@@ -68,7 +68,12 @@ public class AsyncIpLocationFunction extends RichAsyncFunction<ShortLinkDetail, 
                     HttpEntity entity = response.getEntity();
                     String result = EntityUtils.toString(entity, "UTF-8");
                     ObjectNode objectNode = JsonUtil.json2Obj(result, ObjectNode.class);
-                    String country = objectNode.get("country_name").textValue();
+                    String country;
+                    if(objectNode.get("country_name")!=null){
+                       country= objectNode.get("country_name").textValue();
+                    }else{
+                      country="-";
+                    }
                     shortLinkDetail.setCountry(country);
                     return shortLinkDetail;
                   }
@@ -89,9 +94,9 @@ public class AsyncIpLocationFunction extends RichAsyncFunction<ShortLinkDetail, 
     try {
       RequestConfig requestConfig =
           RequestConfig.custom()
-              .setSocketTimeout(20000)
-              .setConnectTimeout(10000)
-              .setConnectionRequestTimeout(1000)
+              .setSocketTimeout(200000)
+              .setConnectTimeout(100000)
+              .setConnectionRequestTimeout(20000)
               .build();
       ConnectingIOReactor ioReactor = new DefaultConnectingIOReactor();
       PoolingNHttpClientConnectionManager connManager =

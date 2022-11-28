@@ -60,7 +60,7 @@ public class DwsShortLinkVisitStatsApp {
                 return shortLinkVisitStats;
               }
             });
-
+    shortLinkDetailDS.print("short link detail conversion - pv&uv");
     SingleOutputStreamOperator<ShortLinkVisitStats> uniqueVisitorMapDS =
         uniqueVisitorDS.map(
             new MapFunction<String, ShortLinkVisitStats>() {
@@ -74,6 +74,7 @@ public class DwsShortLinkVisitStatsApp {
               }
             });
     // union
+      uniqueVisitorMapDS.print("unique visitor conversion - pv&uv");
     DataStream<ShortLinkVisitStats> unionDS = shortLinkDetailMapDS.union(uniqueVisitorMapDS);
     // watermark
     SingleOutputStreamOperator<ShortLinkVisitStats> watermarksDS =
@@ -108,7 +109,7 @@ public class DwsShortLinkVisitStatsApp {
             ShortLinkVisitStats,
             Tuple8<String, String, Integer, String, String, String, String, String>,
             TimeWindow>
-        windowedStream = keyedStream.window(TumblingEventTimeWindows.of(Time.seconds(10)));
+        windowedStream = keyedStream.window(TumblingEventTimeWindows.of(Time.seconds(3)));
     // Aggregation
     SingleOutputStreamOperator<Object> reduceDS =
         windowedStream.reduce(
