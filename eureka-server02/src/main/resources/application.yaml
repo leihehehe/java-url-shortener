@@ -9,6 +9,6 @@ eureka:
   client:
     service-url:
       #     register to another server to achieve high availability
-      defaultZone: http://${EUREKA1_ADDRESS}:8761/eureka/
+      defaultZone: http://${EUREKA1_ADDRESS:localhost}:8761/eureka/
     registerWithEureka: true
     fetchRegistry: true
