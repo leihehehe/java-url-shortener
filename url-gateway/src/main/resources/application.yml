@@ -2,7 +2,7 @@ eureka:
   client:
     fetch-registry: true
     service-url:
-      defaultZone: http://${eureka1}:8761/eureka/,http://${eureka2}:8762/eureka/
+      defaultZone: http://${EUREKA_SERVER1}:8761/eureka/,http://${EUREKA_SERVER2}:8762/eureka/
 server:
   port: 9999
 spring:
