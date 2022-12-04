@@ -22,15 +22,18 @@ public class ClickHouseUtil {
   private static String CLICK_HOUSE_PASSWORD=null;
   static {
     Properties properties = new Properties();
-    InputStream in = KafkaUtil.class.getClassLoader().getResourceAsStream("application-local.properties");
+    InputStream in = KafkaUtil.class.getClassLoader().getResourceAsStream("application.properties");
     try {
       properties.load(in);
     } catch (IOException e) {
       log.error("Failed to get ClickHouse config,{}", e.getMessage());
     }
-    CLICK_HOUSE_SERVER = properties.getProperty("clickhouse.servers");
-    CLICK_HOUSE_USERNAME=properties.getProperty("clickhouse.username");
-    CLICK_HOUSE_PASSWORD=properties.getProperty("clickhouse.password");
+    String clickhouse_host= System.getenv().get("CLICKHOUSE_HOST");
+    CLICK_HOUSE_SERVER = properties.getProperty("clickhouse.servers").replace("${CLICKHOUSE_HOST}",clickhouse_host);
+    String clickhouse_username= System.getenv().get("CLICKHOUSE_USERNAME");
+    CLICK_HOUSE_USERNAME=properties.getProperty("clickhouse.username").replace("${CLICKHOUSE_USERNAME}",clickhouse_username);
+    String clickhouse_password= System.getenv().get("CLICKHOUSE_PASSWORD");
+    CLICK_HOUSE_PASSWORD=properties.getProperty("clickhouse.password").replace("${CLICKHOUSE_PASSWORD}",clickhouse_password);
     CLICK_HOUSE_DRIVER=properties.getProperty("clickhouse.driver");
   }
 

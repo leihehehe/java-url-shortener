@@ -16,13 +16,15 @@ public class KafkaUtil {
     static {
         Properties properties = new Properties();
         //change application properties here
-        InputStream in = KafkaUtil.class.getClassLoader().getResourceAsStream("application-local.properties");
+        InputStream in = KafkaUtil.class.getClassLoader().getResourceAsStream("application.properties");
+
         try {
             properties.load(in);
         } catch (IOException e) {
             log.error("Failed to get kafka config,{}",e.getMessage());
         }
-        KAFKA_SERVER= properties.getProperty("kafka.servers");
+        String kafka_host= System.getenv().get("KAFKA_HOST");
+        KAFKA_SERVER= properties.getProperty("kafka.servers").replace("${KAFKA_HOST}",kafka_host);
     }
 
     /**
