@@ -19,7 +19,7 @@
 `password: test`
 
 - 🌟🌟**Log in to the system and shorten your long URL in a second**🌟🌟
-- **Account registration** is currently available for pre-set phone numbers since the AWS account is in the SMS sandbox. 
+- Currently, **Account registration** is only available for pre-set phone numbers since the AWS account is in the SMS sandbox. 
 
 - The **Clicks View** service on the Dashboard is not deployed because `Flink` needs to be deployed in a few high-performance servers which would cost much:(. You should be able to see all the related code in the project, also alternately you can run the program on your side to see the effect.
 
