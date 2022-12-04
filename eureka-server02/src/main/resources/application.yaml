@@ -6,6 +6,7 @@ server:
 eureka:
   instance:
     hostname: eureka2
+    prefer-ip-address: true
   client:
     service-url:
       #     register to another server to achieve high availability
