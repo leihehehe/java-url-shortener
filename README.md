@@ -1,8 +1,9 @@
 # Introduction
 
-**Amazing URL Shortener** is an online tool with high availability to shorten a long link and provide detailed statistics.
+**Amazing URL Shortener** is an online tool with high availability to shorten a long link and provide detailed statistics. It is a full stack project.
 
 **Demo**: 
+Note: Currntly not available due to the high AWS bill(multiple severs for Kubernetes and cluster deployment, elastic IPs and ELB). A demonstration video will be published very soon.
 
 - http://official.urls.fit
 
