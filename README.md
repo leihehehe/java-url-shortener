@@ -4,8 +4,6 @@
 
 **Demo**: 
 
-Note: Currntly not available due to the high AWS bill(multiple severs for Kubernetes and cluster deployment, elastic IPs and ELB). A demonstration video will be published very soon.
-
 - http://official.urls.fit
 
 - http://short.urls.fit
@@ -13,6 +11,10 @@ Note: Currntly not available due to the high AWS bill(multiple severs for Kubern
 **Short Link Demo**: `urls.fit/a26B4EM0`
 
 **Detailed Technical Documentation**: https://leihehe.top/2022/12/04/Amazing-URL-Shortener-Technical-Doc/
+
+Note: Currently the live demo is **unavailable** due to the high AWS bill(multiple severs for Kubernetes and cluster deployment, elastic IPs and ELB). 
+
+A demonstration video will be published very soon.
 
 # Usage
 
