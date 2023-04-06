@@ -14,7 +14,7 @@ pipeline{
                     for(service_name in service_names.tokenize(',')){
                         if(service_name=="parent"){
                             sh 'mvn clean install -Dmaven.test.skip=true'
-                        }else if(service_name="url-common"){
+                        }else if(service_name=="url-common"){
                             sh 'mvn -f url-common clean install -Dmaven.test.skip=true'
                         }else{
                             sh "mvn -f ${service_name} clean package -Dmaven.test.skip=true"
