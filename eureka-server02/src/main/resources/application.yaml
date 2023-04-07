@@ -5,11 +5,11 @@ server:
   port: 8762
 eureka:
   instance:
-    hostname: eureka2
+    hostname: eureka-server02
     prefer-ip-address: true
   client:
     service-url:
       #     register to another server to achieve high availability
-      defaultZone: http://eureka1:8761/eureka/
+      defaultZone: http://eureka-server01:8761/eureka/
     registerWithEureka: true
     fetchRegistry: true
