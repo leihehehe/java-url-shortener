@@ -37,10 +37,10 @@ pipeline{
                             }
                             if(service_name=="eureka-server01"){
                                 sh "docker run -d --name ${service_name} -p 8761:8761 ${imageRegistry}/${projectName}-${service_name}:${version}"
-                                sh "sudo docker network connect eureka-network ${service_name}"
+                                sh "docker network connect eureka-network ${service_name}"
                             }else if(service_name=="eureka-server02"){
                                 sh "docker run -d --name ${service_name} -p 8762:8762 ${imageRegistry}/${projectName}-${service_name}:${version}"
-                                sh "sudo docker network connect eureka-network ${service_name}"
+                                sh "docker network connect eureka-network ${service_name}"
                             }
                         }
                     }
