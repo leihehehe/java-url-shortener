@@ -40,7 +40,7 @@
 
 **DevOps**:
 
+- Docker
 - Jenkins
 - Kubernetes - 1 master node + 2 worker nodes
-- AWS ECR
-- Docker
+- AWS Services - EC2, AWS Route 53, EC2 and ELB
