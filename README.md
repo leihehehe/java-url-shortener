@@ -2,13 +2,13 @@
 
 **Amazing URL Shortener** is an online tool with high availability to shorten a long link and provide detailed statistics. It is a full stack project.
 
-**Demo**: 
+~~**Demo**:~~ 
 
-- http://official.urls.fit
+- ~~http://official.urls.fit~~
 
-- http://short.urls.fit
+- ~~http://short.urls.fit~~
 
-**Short Link Demo**: `urls.fit/a26B4EM0`
+~~**Short Link Demo**: `urls.fit/a26B4EM0`~~
 
 **Detailed Technical Documentation**: https://leihehe.top/2022/12/04/Amazing-URL-Shortener-Technical-Doc/
 
